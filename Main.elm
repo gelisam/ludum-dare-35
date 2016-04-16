@@ -1,6 +1,7 @@
 module Main where
 
 import Color exposing (..)
+import Debug
 import Graphics.Collage exposing (..)
 import Graphics.Element exposing (..)
 import Html exposing (Html)
@@ -91,8 +92,9 @@ walk keys mario =
 -- VIEW
 
 view : (Int, Int) -> Model -> Html
-view (w',h') mario =
+view _ mario =
   let
+    (w',h') = (640, 480)
     (w,h) = (toFloat w', toFloat h')
 
     verb =
@@ -123,9 +125,7 @@ view (w',h') mario =
     
     everything =
       collage w' h'
-        [ rect w h
-            |> filled (rgb 174 238 238)
-        , rect w 50
+        [ rect w 50
             |> filled (rgb 74 167 43)
             |> move (0, 24 - h/2)
         , marioImage
@@ -133,11 +133,33 @@ view (w',h') mario =
             |> move position
         ]
     
-    style = Attributes.style
+    container_style = Attributes.style
       [ ("image-rendering", "pixelated")
+      , ("margin-top", "1em")
+      , ("margin-left", "auto")
+      , ("margin-right", "auto")
+      , ("width", "640px")
+      , ("height", "480px")
+      ]
+    
+    layer_style = Attributes.style
+      [ ("width", "0px")
+      , ("height", "0px")
+      , ("overflow", "visible")
+      ]
+    
+    bg_style = Attributes.style
+      [ ("width", "640px")
+      , ("height", "480px")
+      , ("background-image", "url('/imgs/grey.png')")
+      , ("background-size", "28px 28px")
+      , ("background-position", "0px 0px")
       ]
   in
-    Html.div [style] [Html.fromElement everything]
+    Html.div [container_style]
+      [ Html.div [layer_style] [Html.div [bg_style] []]
+      , Html.div [layer_style] [Html.fromElement everything]
+      ]
 
 
 -- SIGNALS
