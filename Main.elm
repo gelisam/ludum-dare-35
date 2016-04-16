@@ -126,8 +126,8 @@ physics dt player =
 walk : Keys -> Model -> Model
 walk keys player =
   { player
-  | vx = toFloat keys.x / 20
-  , vy = toFloat keys.y / 20
+  | vx = toFloat keys.x / 10
+  , vy = toFloat (-keys.y) / 10  -- positive Y is down
   }
 
 
@@ -145,19 +145,23 @@ view _ player =
     playerImage =
       image 28 28 src
 
-    camera_dx = 320-14
-    camera_dy = 240-14
-    bg_dx = -(round (player.x * 28)) + camera_dx
-    bg_dy = round (player.y * 28) + camera_dy
+    level_dx = 0
+    level_dy = 0
+    player_dx = round (player.x * 28)
+    player_dy = round (player.y * 28)
+    camera_dx = player_dx - (320-14)
+    camera_dy = player_dy - (240-14)
+    bg_dx = camera_dx
+    bg_dy = camera_dy
     
-    debug = (bg_dx, bg_dy)
+    debug = (player.vx, player.vy)
     
     everything =
       layers
         [ level_element
-            |> container 640 480 (topLeftAt (absolute bg_dx) (absolute bg_dy))
+            |> container 640 480 (topLeftAt (absolute (level_dx - camera_dx)) (absolute (level_dy - camera_dy)))
         , playerImage
-            |> container 640 480 (topLeftAt (absolute camera_dx) (absolute camera_dy))
+            |> container 640 480 (topLeftAt (absolute (player_dx - camera_dx)) (absolute (player_dy - camera_dy)))
         ]
     
     top_style = Attributes.style
@@ -193,7 +197,7 @@ view _ player =
       , ("height", "480px")
       , ("background-image", "url('/imgs/grey.png')")
       , ("background-size", "28px 28px")
-      , ("background-position", toString bg_dx ++ "px " ++ toString bg_dy ++ "px")
+      , ("background-position", toString (-bg_dx) ++ "px " ++ toString (-bg_dy) ++ "px")
       ]
   in
     Html.div [top_style]
