@@ -5,7 +5,7 @@ import Graphics.Element as Element exposing (Element)
 
 import Block exposing (Block)
 import Grid exposing (Grid)
-import Powerup exposing (Powerup)
+import Powerup exposing (Powerup(..))
 import Vec exposing (Coord, Vec)
 import View exposing (PositionedElement)
 
@@ -40,6 +40,8 @@ pickup level_coord player_grid powerups =
         coord = level_coord `Vec.plus` player_coord
       in
         case (Grid.get player_coord player_grid, get coord remaining) of
+          (Just (Just _), Just (FixedShape shape orientation)) ->
+            (FixedShape shape orientation :: picked, remaining)
           (Just (Just _), Just powerup) ->
             (powerup :: picked, remove coord remaining)
           _ ->

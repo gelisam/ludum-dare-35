@@ -55,9 +55,9 @@ view model = View.view
   { camera =
       model.player.coord
   , elements =
-      Level.view
-        :: Player.view model.player
-        :: Powerups.view model.powerups
+      [Level.view] ++
+      Powerups.view model.powerups ++
+      [Player.view model.player]
   , debug = toString
       model.player.powerupIds
   }
