@@ -32,7 +32,7 @@ update : (Float, Keys.Action) -> Model -> Model
 update (dt, keys) model =
   let
     player' = Player.update keys model.player
-    collision = Level.collides player'.p (Player.block_grid player')
+    collision = Level.collides player'.coord (Player.block_grid player')
   in
     if collision
     then model
@@ -47,7 +47,7 @@ update (dt, keys) model =
 view : Model -> Html
 view model = View.view
   { camera =
-      model.player.p
+      model.player.coord
   , elements =
       Level.view
         :: Player.view model.player

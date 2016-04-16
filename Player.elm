@@ -16,7 +16,7 @@ import View exposing (PositionedElement)
 
 type alias Model =
   { last_keys : Keys.Action
-  , p : Vec Int
+  , coord : Coord
   , shape : Shape
   , orientation : Orientation
   }
@@ -25,7 +25,7 @@ type alias Model =
 init : Coord -> Model
 init start_coord =
   { last_keys = Keys.NoOp
-  , p = start_coord
+  , coord = start_coord
   , shape = O
   , orientation = R0
   }
@@ -53,7 +53,7 @@ instant_update action model = case action of
     model
   Keys.ArrowKey keys ->
     { model
-    | p = model.p `Vec.plus` keys
+    | coord = model.coord `Vec.plus` keys
     }
   Keys.RotationKey ->
     { model
@@ -72,4 +72,4 @@ block_grid model = Shape.block_grid model.shape model.orientation
 
 view : Model -> PositionedElement
 view model =
-  (model.p, Shape.view model.shape model.orientation)
+  (model.coord, Shape.view model.shape model.orientation)
