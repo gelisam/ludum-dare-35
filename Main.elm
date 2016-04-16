@@ -38,33 +38,15 @@ init =
 update : (Float, Keys) -> Model -> Model
 update (dt, keys) player =
   player
-    |> gravity dt
-    |> jump keys
     |> walk keys
     |> physics dt
-
-
-jump : Keys -> Model -> Model
-jump keys player =
-  if keys.y > 0 && player.vy == 0 then
-      { player | vy = 6.0 }
-
-  else
-      player
-
-
-gravity : Float -> Model -> Model
-gravity dt player =
-  { player
-  | vy = if player.y > 0 then player.vy - dt/4 else 0
-  }
 
 
 physics : Float -> Model -> Model
 physics dt player =
   { player
   | x = player.x + dt * player.vx
-  , y = max 0 (player.y + dt * player.vy)
+  , y = player.y + dt * player.vy
   }
 
 
@@ -72,6 +54,7 @@ walk : Keys -> Model -> Model
 walk keys player =
   { player
   | vx = toFloat keys.x
+  , vy = toFloat keys.y
   }
 
 
