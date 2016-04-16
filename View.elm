@@ -75,5 +75,5 @@ view model =
           [ Html.div [layer_style] [Html.div [bg_style] []]
           , Html.div [layer_style] [Html.fromElement everything]
           ]
-      , Html.div [layer_style] [Html.text (toString model.debug)]
+      , Html.div [layer_style] [Html.text model.debug]
       ]
