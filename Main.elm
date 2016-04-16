@@ -145,16 +145,14 @@ view _ player =
     playerImage =
       image 28 28 src
 
-    bg_dx = toFloat (round player.x)
-    bg_dy = toFloat (round player.y)
+    bg_dx = -(round player.x)
+    bg_dy = round player.y
     
     everything =
-      collage w' h'
+      layers
         [ level_element
-            |> toForm
-            |> move (-bg_dx, -bg_dy)
+            |> container 640 480 (topLeftAt (absolute bg_dx) (absolute bg_dy))
         , playerImage
-            |> toForm
         ]
     
     top_style = Attributes.style
@@ -190,7 +188,7 @@ view _ player =
       , ("height", "480px")
       , ("background-image", "url('/imgs/grey.png')")
       , ("background-size", "28px 28px")
-      , ("background-position", toString (-bg_dx) ++ "px " ++ toString bg_dy ++ "px")
+      , ("background-position", toString bg_dx ++ "px " ++ toString bg_dy ++ "px")
       ]
   in
     Html.div [top_style]
