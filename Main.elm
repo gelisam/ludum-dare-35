@@ -118,19 +118,10 @@ view _ mario =
     marioImage =
       image 28 28 src
 
-    groundY = 62 - h/2
-
-    position =
-      (mario.x, mario.y + groundY)
-    
     everything =
       collage w' h'
-        [ rect w 50
-            |> filled (rgb 74 167 43)
-            |> move (0, 24 - h/2)
-        , marioImage
+        [ marioImage
             |> toForm
-            |> move position
         ]
     
     top_style = Attributes.style
@@ -166,7 +157,7 @@ view _ mario =
       , ("height", "480px")
       , ("background-image", "url('/imgs/grey.png')")
       , ("background-size", "28px 28px")
-      , ("background-position", "0px 0px")
+      , ("background-position", toString (-mario.x) ++ "px " ++ toString mario.y ++ "px")
       ]
   in
     Html.div [top_style]
