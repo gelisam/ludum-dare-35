@@ -15,6 +15,8 @@ import String
 import Time exposing (..)
 import Window
 
+import Vec exposing (Vec)
+
 
 -- MODEL
 
@@ -86,11 +88,6 @@ level_element =
     grid element_level
 
 
-type alias Vec a =
-  { x : a
-  , y : a
-  }
-
 type alias Player =
   { p : Vec Float
   , v : Vec Float
@@ -106,8 +103,8 @@ type alias Keys = { x:Int, y:Int }
 
 init : Model
 init =
-  { player = { p = {x = 0, y = 0}
-             , v = {x = 0, y = 0}
+  { player = { p = Vec.init
+             , v = Vec.init
              }
   }
 
@@ -155,9 +152,7 @@ view _ model =
     playerImage =
       image 28 28 src
 
-    level_dp = { x = 0
-               , y = 0
-               }
+    level_dp = Vec.init
     player_dp = { x = round (model.player.p.x * 28)
                 , y = round (model.player.p.y * 28)
                 }
