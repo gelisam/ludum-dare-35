@@ -2,6 +2,7 @@ module Player where
 
 import Graphics.Element as Element exposing (Element)
 import Set exposing (Set)
+import Time exposing (Time)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
@@ -16,6 +17,7 @@ import View exposing (PositionedElement)
 
 type alias Model =
   { last_keys : Keys.Action
+  , inactive_dt : Time
   , coord : Coord
   , shape : Shape
   , orientation : Orientation
@@ -26,6 +28,7 @@ type alias Model =
 init : Coord -> Model
 init start_coord =
   { last_keys = Keys.NoOp
+  , inactive_dt = 0
   , coord = start_coord
   -- , shape = I
   -- , orientation = R0
@@ -38,35 +41,77 @@ init start_coord =
 
 -- UPDATE
 
-type alias Action = Keys.Action
+type alias Action =
+  { dt : Time
+  , keys : Keys.Action
+  }
 
 update : Action -> Model -> Model
-update action model =
-  if model.last_keys == action
-  then
-    model
-  else
-    let
-      model' = instant_update action model
-    in
-      { model' | last_keys = action }
+update action =
+  time_passes action.dt >>
+  keys_are_pressed action.keys
 
-instant_update : Keys.Action -> Model -> Model
-instant_update action model = case action of
+time_passes : Time -> Model -> Model
+time_passes dt model =
+  { model
+  | inactive_dt = model.inactive_dt + dt
+  }
+
+normal_auto_repeat_delay : Time
+normal_auto_repeat_delay = 80 * Time.millisecond
+
+up_auto_repeat_delay : Time
+up_auto_repeat_delay = 120 * Time.millisecond
+
+down_auto_repeat_delay : Time
+down_auto_repeat_delay = 50 * Time.millisecond
+
+keys_are_pressed : Keys.Action -> Model -> Model
+keys_are_pressed keys model = case keys of
   Keys.NoOp ->
     model
   Keys.LeftKey ->
-    { model | coord = model.coord `Vec.plus` { x = -1, y = 0 } }
-  Keys.RightKey ->
-    { model | coord = model.coord `Vec.plus` { x = 1, y = 0 } }
-  Keys.UpKey ->
-    if Powerup.id Jump `Set.member` model.powerupIds
+    if model.last_keys /= Keys.LeftKey || model.inactive_dt > normal_auto_repeat_delay
     then
-      { model | coord = model.coord `Vec.plus` { x = 0, y = -1 } }
+      { model
+      | coord = model.coord `Vec.plus` { x = -1, y = 0 }
+      , last_keys = Keys.LeftKey
+      , inactive_dt = 0
+      }
+    else
+      model
+  Keys.RightKey ->
+    if model.last_keys /= Keys.RightKey || model.inactive_dt > normal_auto_repeat_delay
+    then
+      { model
+      | coord = model.coord `Vec.plus` { x = 1, y = 0 }
+      , last_keys = Keys.RightKey
+      , inactive_dt = 0
+      }
+    else
+      model
+  Keys.UpKey ->
+    if
+      Powerup.id Jump `Set.member` model.powerupIds &&
+      (model.last_keys /= Keys.UpKey || model.inactive_dt > up_auto_repeat_delay)
+    then
+      { model
+      | coord = model.coord `Vec.plus` { x = 0, y = -1 }
+      , last_keys = Keys.UpKey
+      , inactive_dt = 0
+      }
     else
       model
   Keys.DownKey ->
-    { model | coord = model.coord `Vec.plus` { x = 0, y = 1 } }
+    if model.last_keys /= Keys.DownKey || model.inactive_dt > down_auto_repeat_delay
+    then
+      { model
+      | coord = model.coord `Vec.plus` { x = 0, y = 1 }
+      , last_keys = Keys.DownKey
+      , inactive_dt = 0
+      }
+    else
+      model
   Keys.RotationKey ->
     if Powerup.id Rotate `Set.member` model.powerupIds
     then

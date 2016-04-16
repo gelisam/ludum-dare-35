@@ -2,6 +2,7 @@ module Main where
 
 import AnimationFrame
 import Html exposing (Html)
+import Time exposing (Time)
 
 import Keys
 import Level
@@ -29,10 +30,10 @@ init =
 
 -- UPDATE
 
-update : (Float, Keys.Action) -> Model -> Model
-update (dt, keys) model =
+update : Player.Action -> Model -> Model
+update action model =
   let
-    player' = Player.update keys model.player
+    player' = Player.update action model.player
     collision = Level.collides player'.coord (Player.block_grid player')
   in
     if collision
@@ -59,7 +60,7 @@ view model = View.view
       Powerups.view model.powerups ++
       [Player.view model.player]
   , debug = toString
-      model.player.powerupIds
+      (model.player.inactive_dt, Time.second)
   }
 
 
@@ -70,13 +71,9 @@ main =
   Signal.map view (Signal.foldp update init input)
 
 
--- disable animations
-input : Signal (Float, Keys.Action)
-input = Signal.map (\action -> (0, action)) Keys.signal
-
--- input : Signal (Float, Keys.Action)
--- input =
---   let
---     delta = Signal.map (\t -> t/20) AnimationFrame.frame
---   in
---     Signal.sampleOn delta (Signal.map2 (,) delta Keys.signal)
+input : Signal Player.Action
+input =
+  let
+    delta = AnimationFrame.frame
+  in
+    Signal.sampleOn delta (Signal.map2 (\dt keys -> { dt = dt, keys = keys }) delta Keys.signal)
