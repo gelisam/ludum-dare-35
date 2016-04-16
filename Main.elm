@@ -81,8 +81,6 @@ element_level =
 level_element : Element
 level_element =
   let
-    w = Array.length element_level
-    h = Array.length (Maybe.withDefault Array.empty (Array.get 0 element_level))
     grid = flow down << Array.toList << Array.map (flow right << Array.toList)
   in
     grid element_level
@@ -143,9 +141,6 @@ walk keys player =
 view : (Int, Int) -> Model -> Html
 view _ model =
   let
-    (w',h') = (640, 480)
-    (w,h) = (toFloat w', toFloat h')
-
     src =
       "/imgs/red.png"
 
