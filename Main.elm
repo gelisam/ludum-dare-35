@@ -147,6 +147,7 @@ view _ player =
       collage w' h'
         [ level_element
             |> toForm
+            |> move (-player.x, -player.y)
         , playerImage
             |> toForm
         ]
