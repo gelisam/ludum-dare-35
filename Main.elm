@@ -30,6 +30,14 @@ init =
 
 -- UPDATE
 
+unlessCollision : (Player.Model -> Player.Model) -> Player.Model -> Player.Model
+unlessCollision f player =
+  let
+    player' = f player
+    collision = Level.collides player'.coord (Player.block_grid player')
+  in
+    if collision then player else player'
+
 update : Player.Action -> Model -> Model
 update action model =
   let
@@ -44,7 +52,7 @@ update action model =
           Powerups.pickup player'.coord (Player.block_grid player') model.powerups
       in
         { model
-        | player = List.foldr Player.pickup player' pickedPowerups
+        | player = List.foldr (unlessCollision << Player.pickup) player' pickedPowerups
         , powerups = remainingPowerups
         }
 
