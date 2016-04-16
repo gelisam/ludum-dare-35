@@ -161,12 +161,21 @@ view _ player =
     
     debug = (player.v.x, player.v.y)
     
+    deltaPosition : Vec Int -> Element -> Element
+    deltaPosition dp =
+      let
+        position = topLeftAt
+          (absolute (dp.x - camera_dp.x))
+          (absolute (dp.y - camera_dp.y))
+      in
+        container 640 480 position
+    
     everything =
       layers
         [ level_element
-            |> container 640 480 (topLeftAt (absolute (level_dp.x - camera_dp.x)) (absolute (level_dp.y - camera_dp.y)))
+            |> deltaPosition level_dp
         , playerImage
-            |> container 640 480 (topLeftAt (absolute (player_dp.x - camera_dp.x)) (absolute (player_dp.y - camera_dp.y)))
+            |> deltaPosition player_dp
         ]
     
     top_style = Attributes.style
