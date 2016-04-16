@@ -150,6 +150,8 @@ view _ player =
     bg_dx = -(round (player.x * 28)) + camera_dx
     bg_dy = round (player.y * 28) + camera_dy
     
+    debug = (bg_dx, bg_dy)
+    
     everything =
       layers
         [ level_element
@@ -200,6 +202,7 @@ view _ player =
           [ Html.div [layer_style] [Html.div [bg_style] []]
           , Html.div [layer_style] [Html.fromElement everything]
           ]
+      , Html.div [layer_style] [Html.text (toString debug)]
       ]
 
 
