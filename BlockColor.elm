@@ -29,6 +29,10 @@ parse char = case char of
   _   -> Nothing
 
 
-view : Color -> Element
-view color =
+viewOpaque : Color -> Element
+viewOpaque color =
   Element.image 28 28 ("/imgs/" ++ String.toLower (toString color) ++ ".png")
+
+viewTransparent : Maybe Color -> Element
+viewTransparent = 
+  Maybe.map viewOpaque >> Maybe.withDefault (Element.spacer 28 28)

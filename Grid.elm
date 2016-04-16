@@ -22,10 +22,6 @@ map : (a -> b) -> Grid a -> Grid b
 map = Array.map << Array.map
 
 
-viewOpaque : Grid Element -> Element
-viewOpaque =
+view : Grid Element -> Element
+view =
   flow down << Array.toList << Array.map (flow right << Array.toList)
-
-viewTransparent : Grid (Maybe Element) -> Element
-viewTransparent =
-  viewOpaque << map (Maybe.withDefault (spacer 28 28))

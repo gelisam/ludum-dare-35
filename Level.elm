@@ -62,11 +62,11 @@ update NoOp model = model
 
 element_level : Grid Element
 element_level =
-    Grid.map BlockColor.view color_level
+    Grid.map BlockColor.viewOpaque color_level
 
 level_element : Element
 level_element =
-  Grid.viewOpaque element_level
+  Grid.view element_level
 
 view : Model -> PositionedElement
 view () = (Vec.init, level_element)
