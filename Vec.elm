@@ -30,3 +30,13 @@ scale s v =
   { x = s * v.x
   , y = s * v.y
   }
+
+
+-- units are blocks
+type alias Coord = Vec Int
+
+-- units are pixels
+type alias Pixels = Vec Int
+
+pixels : Coord -> Pixels
+pixels = scale 28

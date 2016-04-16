@@ -17,6 +17,7 @@ import Keys exposing (Keys)
 import Level
 import Player
 import Vec exposing (Vec)
+import View
 
 
 -- MODEL
@@ -47,78 +48,16 @@ update (dt, keys) model =
 -- VIEW
 
 view : Model -> Html
-view model =
-  let
-    level_dp = Vec.init
-    player_dp = Vec.scale 28 model.player.p
-    camera_dp = { x = player_dp.x - (320-14)
-                , y = player_dp.y - (240-14)
-                }
-    bg_dp = camera_dp
-    
-    debug = (model.player.p.x, model.player.p.y)
-    
-    deltaPosition : Vec Int -> Element -> Element
-    deltaPosition dp =
-      let
-        position = topLeftAt
-          (absolute (dp.x - camera_dp.x))
-          (absolute (dp.y - camera_dp.y))
-      in
-        container 640 480 position
-    
-    everything =
-      layers
-        [ Level.view model.level
-            |> deltaPosition level_dp
-        , Player.view model.player
-            |> deltaPosition player_dp
-        ]
-    
-    top_style = Attributes.style
-      [ ("image-rendering", "pixelated")
+view model = View.view
+  { camera =
+      model.player.p
+  , elements =
+      [ (Vec.init, Level.view model.level)
+      , (model.player.p, Player.view model.player)
       ]
-    
-    title_style = Attributes.style
-      [ ("margin-top", "2em")
-      , ("margin-left", "auto")
-      , ("margin-right", "auto")
-      , ("display", "block")
-      , ("width", "363px")
-      , ("height", "45px")
-      ]
-    
-    container_style = Attributes.style
-      [ ("margin-top", "1em")
-      , ("margin-left", "auto")
-      , ("margin-right", "auto")
-      , ("width", "640px")
-      , ("height", "480px")
-      , ("border", "4px solid black")
-      ]
-    
-    layer_style = Attributes.style
-      [ ("width", "0px")
-      , ("height", "0px")
-      , ("overflow", "visible")
-      ]
-    
-    bg_style = Attributes.style
-      [ ("width", "640px")
-      , ("height", "480px")
-      , ("background-image", "url('/imgs/grey.png')")
-      , ("background-size", "28px 28px")
-      , ("background-position", toString (-bg_dp.x) ++ "px " ++ toString (-bg_dp.y) ++ "px")
-      ]
-  in
-    Html.div [top_style]
-      [ Html.img [title_style, Attributes.src "/imgs/title.png"] []
-      , Html.div [container_style]
-          [ Html.div [layer_style] [Html.div [bg_style] []]
-          , Html.div [layer_style] [Html.fromElement everything]
-          ]
-      , Html.div [layer_style] [Html.text (toString debug)]
-      ]
+  , debug = toString
+      (model.player.p.x, model.player.p.y)
+  }
 
 
 -- SIGNALS
