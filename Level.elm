@@ -5,6 +5,8 @@ import Graphics.Element exposing (..)
 import String
 
 import BlockColor exposing (Color(..))
+import Vec
+import View exposing (PositionedElement)
 
 
 -- MODEL
@@ -90,5 +92,5 @@ level_element =
   in
     grid element_level
 
-view : Model -> Element
-view () = level_element
+view : Model -> PositionedElement
+view () = (Vec.init, level_element)

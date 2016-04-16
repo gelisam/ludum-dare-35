@@ -7,9 +7,11 @@ import Graphics.Element exposing (..)
 import Vec exposing (..)
 
 
+type alias PositionedElement = (Coord, Element)
+
 type alias Model =
   { camera : Coord
-  , elements : List (Coord, Element)
+  , elements : List PositionedElement
   , debug : String
   }
 

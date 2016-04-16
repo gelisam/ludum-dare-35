@@ -4,6 +4,7 @@ import Graphics.Element as Element exposing (Element)
 
 import Keys exposing (Keys)
 import Vec exposing (Vec)
+import View exposing (PositionedElement)
 
 
 -- MODEL
@@ -46,6 +47,6 @@ instant_update keys model =
 
 -- VIEW
 
-view : Model -> Element
+view : Model -> PositionedElement
 view model =
-  Element.image 28 28 "/imgs/red.png"
+  (model.p, Element.image 28 28 "/imgs/red.png")

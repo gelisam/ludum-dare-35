@@ -42,8 +42,8 @@ view model = View.view
   { camera =
       model.player.p
   , elements =
-      [ (Vec.init, Level.view model.level)
-      , (model.player.p, Player.view model.player)
+      [ Level.view model.level
+      , Player.view model.player
       ]
   , debug = toString
       (model.player.p.x, model.player.p.y)
