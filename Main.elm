@@ -133,9 +133,21 @@ view _ mario =
             |> move position
         ]
     
-    container_style = Attributes.style
+    top_style = Attributes.style
       [ ("image-rendering", "pixelated")
-      , ("margin-top", "1em")
+      ]
+    
+    title_style = Attributes.style
+      [ ("margin-top", "2em")
+      , ("margin-left", "auto")
+      , ("margin-right", "auto")
+      , ("display", "block")
+      , ("width", "363px")
+      , ("height", "45px")
+      ]
+    
+    container_style = Attributes.style
+      [ ("margin-top", "1em")
       , ("margin-left", "auto")
       , ("margin-right", "auto")
       , ("width", "640px")
@@ -157,9 +169,12 @@ view _ mario =
       , ("background-position", "0px 0px")
       ]
   in
-    Html.div [container_style]
-      [ Html.div [layer_style] [Html.div [bg_style] []]
-      , Html.div [layer_style] [Html.fromElement everything]
+    Html.div [top_style]
+      [ Html.img [title_style, Attributes.src "/imgs/title.png"] []
+      , Html.div [container_style]
+          [ Html.div [layer_style] [Html.div [bg_style] []]
+          , Html.div [layer_style] [Html.fromElement everything]
+          ]
       ]
 
 
