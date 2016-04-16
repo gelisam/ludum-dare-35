@@ -1,5 +1,6 @@
 module Main where
 
+import Array exposing (Array)
 import Color exposing (..)
 import Debug
 import Graphics.Collage exposing (..)
@@ -7,11 +8,62 @@ import Graphics.Element exposing (..)
 import Html exposing (Html)
 import Html.Attributes as Attributes
 import Keyboard
+import String
 import Time exposing (..)
 import Window
 
 
 -- MODEL
+
+type Color
+  = White  -- ' '
+  | Grey   -- '#'
+  | Blue   -- 'b' for upgrade, 'B' for block
+  | Cyan   -- 'c' for upgrade, 'C' for block
+  | Green  -- 'g' for upgrade, 'G' for block
+  | Orange -- 'o' for upgrade, 'O' for block
+  | Red    -- 'r' for upgrade, 'R' for block
+  | Violet -- 'v' for upgrade, 'V' for block
+  | Yellow -- 'y' for upgrade, 'Y' for block
+
+-- '.' for player position, '!' for goal
+int_level : List String
+int_level =
+  [ "########"
+  , "#      #"
+  , "#  .   #"
+  , "#      #"
+  , "#      #"
+  , "#  BB  #"
+  , "#  BOO #"
+  , "#G B O #"
+  , "#GGYYO #"
+  , "#OGYYV #"
+  , "#ORRVV #"
+  , "#OORRV!#"
+  , "########"
+  ]
+
+color_level : Array (Array Color)
+color_level =
+  let
+    color : Char -> Color
+    color char = case char of
+      ' ' -> White
+      'B' -> Blue
+      'C' -> Cyan
+      'G' -> Green
+      'O' -> Orange
+      'R' -> Red
+      'V' -> Violet
+      'Y' -> Yellow
+      _   -> Grey
+    
+    row : String -> Array Color
+    row = Array.fromList << List.map color << String.toList
+  in
+    Array.fromList (List.map row int_level)
+
 
 type alias Model =
   { x : Float
