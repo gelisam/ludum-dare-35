@@ -140,6 +140,7 @@ view _ mario =
       , ("margin-right", "auto")
       , ("width", "640px")
       , ("height", "480px")
+      , ("border", "4px solid black")
       ]
     
     layer_style = Attributes.style
