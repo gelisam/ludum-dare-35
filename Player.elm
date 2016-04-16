@@ -6,7 +6,7 @@ import Set exposing (Set)
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Keys
-import Shape exposing (Shape(..), ShapeId)
+import Shape exposing (Shape(..), Orientation(..))
 import Vec exposing (Coord, Vec)
 import View exposing (PositionedElement)
 
@@ -16,8 +16,8 @@ import View exposing (PositionedElement)
 type alias Model =
   { last_keys : Keys.Action
   , p : Vec Int
-  , shapeIds : Set ShapeId
   , shape : Shape
+  , orientation : Orientation
   }
 
 
@@ -25,8 +25,8 @@ init : Coord -> Model
 init start_coord =
   { last_keys = Keys.NoOp
   , p = start_coord
-  , shapeIds = Set.fromList [0..6]
   , shape = O
+  , orientation = R0
   }
 
 
@@ -54,17 +54,21 @@ instant_update action model = case action of
     { model
     | p = model.p `Vec.plus` keys
     }
+  Keys.RotationKey ->
+    { model
+    | orientation = Shape.nextOrientation model.orientation
+    }
   Keys.ShapeShiftKey ->
     { model
-    | shape = Shape.nextFrom model.shapeIds model.shape
+    | shape = Shape.nextShape model.shape
     }
 
 
 -- VIEW
 
 block_grid : Model -> Grid (Maybe Block)
-block_grid = Shape.block_grid << .shape
+block_grid model = Shape.block_grid model.shape model.orientation
 
 view : Model -> PositionedElement
 view model =
-  (model.p, Shape.view model.shape)
+  (model.p, Shape.view model.shape model.orientation)

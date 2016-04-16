@@ -8,21 +8,11 @@ import Grid exposing (Grid)
 
 
 type Shape = O | L | J | Z | S | T | I
-type alias ShapeId = Int
+type Orientation = R0 | R1 | R2 | R3
 
 
-id : Shape -> ShapeId
-id shape = case shape of
-  O -> 0
-  L -> 1
-  J -> 2
-  Z -> 3
-  S -> 4
-  T -> 5
-  I -> 6
-
-next : Shape -> Shape
-next shape = case shape of
+nextShape : Shape -> Shape
+nextShape shape = case shape of
   O -> L
   L -> J
   J -> Z
@@ -31,41 +21,116 @@ next shape = case shape of
   T -> I
   I -> O
 
-nextFrom : Set ShapeId -> Shape -> Shape
-nextFrom shapeIds shape =
-  let
-    shape' = next shape
-  in
-    if id shape' `Set.member` shapeIds
-    then shape'
-    else nextFrom shapeIds shape'
+nextOrientation : Orientation -> Orientation
+nextOrientation orientation = case orientation of
+  R0 -> R1
+  R1 -> R2
+  R2 -> R3
+  R3 -> R0
 
 
-char_grid : Shape -> Grid Char
-char_grid shape = case shape of
-  O -> Grid.init [ "YY"
-                 , "YY"
-                 ]
-  L -> Grid.init [ "  O"
-                 , "OOO"
-                 ]
-  J -> Grid.init [ "B  "
-                 , "BBB"
-                 ]
-  Z -> Grid.init [ "RR "
-                 , " RR"
-                 ]
-  S -> Grid.init [ " GG"
-                 , "GG "
-                 ]
-  T -> Grid.init [ " V "
-                 , "VVV"
-                 ]
-  I -> Grid.init [ "CCCC"
-                 ]
+char_grid : Shape -> Orientation -> Grid Char
+char_grid shape orientation = case (shape, orientation) of
+  (O, _) -> Grid.init [ "    "
+                      , " YY "
+                      , " YY "
+                      , "    "
+                      ]
+  (I, R0) -> Grid.init [ "    "
+                       , "CCCC"
+                       , "    "
+                       , "    "
+                       ]
+  (I, R1) -> Grid.init [ "  C "
+                       , "  C "
+                       , "  C "
+                       , "  C "
+                       ]
+  (S, R0) -> Grid.init [ "    "
+                       , "  GG"
+                       , " GG "
+                       , "    "
+                       ]
+  (S, R1) -> Grid.init [ "  G "
+                       , "  GG"
+                       , "   G"
+                       , "    "
+                       ]
+  (Z, R0) -> Grid.init [ "    "
+                       , " RR "
+                       , "  RR"
+                       , "    "
+                       ]
+  (Z, R1) -> Grid.init [ "   R"
+                       , "  RR"
+                       , "  R "
+                       , "    "
+                       ]
+  (L, R0) -> Grid.init [ "    "
+                       , " OOO"
+                       , " O  "
+                       , "    "
+                       ]
+  (L, R1) -> Grid.init [ "  O "
+                       , "  O "
+                       , "  OO"
+                       , "    "
+                       ]
+  (L, R2) -> Grid.init [ "   O"
+                       , " OOO"
+                       , "    "
+                       , "    "
+                       ]
+  (L, R3) -> Grid.init [ " OO "
+                       , "  O "
+                       , "  O "
+                       , "    "
+                       ]
+  (J, R0) -> Grid.init [ "    "
+                       , " BBB"
+                       , "   B"
+                       , "    "
+                       ]
+  (J, R1) -> Grid.init [ "  BB"
+                       , "  B "
+                       , "  B "
+                       , "    "
+                       ]
+  (J, R2) -> Grid.init [ " B  "
+                       , " BBB"
+                       , "    "
+                       , "    "
+                       ]
+  (J, R3) -> Grid.init [ "  B "
+                       , "  B "
+                       , " BB "
+                       , "    "
+                       ]
+  (T, R0) -> Grid.init [ "    "
+                       , " VVV"
+                       , "  V "
+                       , "    "
+                       ]
+  (T, R1) -> Grid.init [ "  V "
+                       , "  VV"
+                       , "  V "
+                       , "    "
+                       ]
+  (T, R2) -> Grid.init [ "  V "
+                       , " VVV"
+                       , "    "
+                       , "    "
+                       ]
+  (T, R3) -> Grid.init [ "  V "
+                       , " VV "
+                       , "  V "
+                       , "    "
+                       ]
+  (_, R2) -> char_grid shape R0
+  (_, R3) -> char_grid shape R1
 
-block_grid : Shape -> Grid (Maybe Block)
-block_grid = Grid.map Block.parse << char_grid
+block_grid : Shape -> Orientation -> Grid (Maybe Block)
+block_grid shape orientation = Grid.map Block.parse <| char_grid shape orientation
 
-view : Shape -> Element
-view = Grid.view << Grid.map Block.viewTransparent << block_grid
+view : Shape -> Orientation -> Element
+view shape orientation = Grid.view <| Grid.map Block.viewTransparent <| block_grid shape orientation

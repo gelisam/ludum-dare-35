@@ -10,6 +10,7 @@ import Vec exposing (Vec)
 type Action
   = NoOp
   | ArrowKey (Vec Int)
+  | RotationKey
   | ShapeShiftKey
 
 
@@ -22,6 +23,9 @@ arrowAction vec =
     -- Keyboard's positive Y point up, Html's Y points down. We use Html's convention.
     ArrowKey { vec | y = -vec.y }
 
+rotationAction : Bool -> Action
+rotationAction isDown = if isDown then RotationKey else NoOp
+
 shapeShiftAction : Bool -> Action
 shapeShiftAction isDown = if isDown then ShapeShiftKey else NoOp
 
@@ -30,9 +34,13 @@ arrowSignal : Signal Action
 arrowSignal = Keyboard.arrows
   |> Signal.map arrowAction
 
+rotationSignal : Signal Action
+rotationSignal = Keyboard.isDown (Char.toCode 'Z')
+  |> Signal.map rotationAction
+
 shapeShiftSignal : Signal Action
-shapeShiftSignal = Keyboard.isDown (Char.toCode 'C')
+shapeShiftSignal = Keyboard.isDown (Char.toCode 'X')
   |> Signal.map shapeShiftAction
 
 signal : Signal Action
-signal = arrowSignal `Signal.merge` shapeShiftSignal
+signal = arrowSignal `Signal.merge` rotationSignal `Signal.merge` shapeShiftSignal
