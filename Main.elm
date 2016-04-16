@@ -1,5 +1,6 @@
 module Main where
 
+import AnimationFrame
 import Array exposing (Array)
 import Color exposing (..)
 import Debug
@@ -9,6 +10,7 @@ import Html exposing (Html)
 import Html.Attributes as Attributes
 import Keyboard
 import Maybe
+import Signal
 import String
 import Time exposing (..)
 import Window
@@ -143,11 +145,14 @@ view _ player =
     playerImage =
       image 28 28 src
 
+    bg_dx = toFloat (round player.x)
+    bg_dy = toFloat (round player.y)
+    
     everything =
       collage w' h'
         [ level_element
             |> toForm
-            |> move (-player.x, -player.y)
+            |> move (-bg_dx, -bg_dy)
         , playerImage
             |> toForm
         ]
@@ -185,7 +190,7 @@ view _ player =
       , ("height", "480px")
       , ("background-image", "url('/imgs/grey.png')")
       , ("background-size", "28px 28px")
-      , ("background-position", toString (-player.x) ++ "px " ++ toString player.y ++ "px")
+      , ("background-position", toString (-bg_dx) ++ "px " ++ toString bg_dy ++ "px")
       ]
   in
     Html.div [top_style]
@@ -207,6 +212,6 @@ main =
 input : Signal (Float, Keys)
 input =
   let
-    delta = Signal.map (\t -> t/20) (fps 30)
+    delta = Signal.map (\t -> t/20) AnimationFrame.frame
   in
     Signal.sampleOn delta (Signal.map2 (,) delta Keyboard.arrows)
