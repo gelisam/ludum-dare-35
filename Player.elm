@@ -40,9 +40,7 @@ update action model =
 instant_update : Keys -> Model -> Model
 instant_update keys model =
   { model
-  | p = { x = model.p.x + keys.x
-        , y = model.p.y + keys.y
-        }
+  | p = model.p `Vec.plus` keys
   }
 
 

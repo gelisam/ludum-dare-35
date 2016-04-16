@@ -112,9 +112,7 @@ view : Model -> Html
 view model =
   let
     level_dp = Vec.init
-    player_dp = { x = model.player.p.x * 28
-                , y = model.player.p.y * 28
-                }
+    player_dp = Vec.scale 28 model.player.p
     camera_dp = { x = player_dp.x - (320-14)
                 , y = player_dp.y - (240-14)
                 }
