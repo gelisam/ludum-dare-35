@@ -1,10 +1,10 @@
 module Level where
 
-import Array exposing (Array)
 import Graphics.Element exposing (..)
 import String
 
 import BlockColor exposing (Color(..))
+import Grid exposing (Grid)
 import Vec
 import View exposing (PositionedElement)
 
@@ -27,8 +27,8 @@ init = ()
 -- 'v' for upgrade, 'V' for block
 -- 'y' for upgrade, 'Y' for block
 -- '.' for player position, '!' for goal
-int_level : List String
-int_level =
+int_level : Grid Char
+int_level = Grid.init
   [ "########"
   , "#      #"
   , "#  .   #"
@@ -44,13 +44,9 @@ int_level =
   , "########"
   ]
 
-color_level : Array (Array Color)
+color_level : Grid Color
 color_level =
-  let
-    row : String -> Array Color
-    row = Array.fromList << List.map (Maybe.withDefault White << BlockColor.parse) << String.toList
-  in
-    Array.fromList (List.map row int_level)
+  Grid.map (Maybe.withDefault White << BlockColor.parse) int_level
 
 
 -- UPDATE
@@ -64,16 +60,13 @@ update NoOp model = model
 
 -- VIEW
 
-element_level : Array (Array Element)
+element_level : Grid Element
 element_level =
-    (Array.map << Array.map) BlockColor.view color_level
+    Grid.map BlockColor.view color_level
 
 level_element : Element
 level_element =
-  let
-    grid = flow down << Array.toList << Array.map (flow right << Array.toList)
-  in
-    grid element_level
+  Grid.viewOpaque element_level
 
 view : Model -> PositionedElement
 view () = (Vec.init, level_element)
