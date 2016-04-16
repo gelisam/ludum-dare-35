@@ -15,7 +15,7 @@ type Action
 
 arrowAction : Vec Int -> Action
 arrowAction vec =
-  if vec.x == 0 && vec.y == 0
+  if (vec.x == 0 && vec.y == 0) || (vec.x /= 0 && vec.y /= 0)
   then
     NoOp
   else
