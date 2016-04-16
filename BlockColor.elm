@@ -16,23 +16,17 @@ type Color
   | Yellow
 
 
-opaqueColor : Char -> Color
-opaqueColor char = case char of
-  ' ' -> White
-  'B' -> Blue
-  'C' -> Cyan
-  'G' -> Green
-  'O' -> Orange
-  'R' -> Red
-  'V' -> Violet
-  'Y' -> Yellow
-  _   -> Grey
-
--- ' ' for transparent
-transparentColor : Char -> Maybe Color
-transparentColor char = case opaqueColor char of
-  White -> Nothing
-  color -> Just color
+parse : Char -> Maybe Color
+parse char = case char of
+  '#' -> Just Grey
+  'B' -> Just Blue
+  'C' -> Just Cyan
+  'G' -> Just Green
+  'O' -> Just Orange
+  'R' -> Just Red
+  'V' -> Just Violet
+  'Y' -> Just Yellow
+  _   -> Nothing
 
 
 view : Color -> Element

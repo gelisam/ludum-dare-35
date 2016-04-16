@@ -48,7 +48,7 @@ color_level : Array (Array Color)
 color_level =
   let
     row : String -> Array Color
-    row = Array.fromList << List.map BlockColor.opaqueColor << String.toList
+    row = Array.fromList << List.map (Maybe.withDefault White << BlockColor.parse) << String.toList
   in
     Array.fromList (List.map row int_level)
 
