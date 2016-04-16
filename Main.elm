@@ -85,23 +85,22 @@ level_element =
     grid element_level
 
 
+type alias Keys = Vec Int
+
 type alias Player =
-  { p : Vec Float
-  , v : Vec Float
+  { p : Vec Int
   }
 
 type alias Model =
-  { player : Player
+  { last_keys : Keys
+  , player : Player
   }
-
-
-type alias Keys = { x:Int, y:Int }
 
 
 init : Model
 init =
-  { player = { p = Vec.init
-             , v = Vec.init
+  { last_keys = Vec.init
+  , player = { p = Vec.init
              }
   }
 
@@ -109,28 +108,26 @@ init =
 -- UPDATE
 
 update : (Float, Keys) -> Model -> Model
-update (dt, keys) model =
-  { model
-  | player = model.player
-      |> walk keys
-      |> physics dt
-  }
+update (dt, keys) =
+  walk keys
 
 
-physics : Float -> Player -> Player
-physics dt player =
+walk : Keys -> Model -> Model
+walk keys model =
+  Debug.log (toString (model.last_keys, keys)) <| if model.last_keys == keys
+  then
+    model
+  else
+    { model
+    | last_keys = keys
+    , player = instant_walk keys model.player
+    }
+
+instant_walk : Keys -> Player -> Player
+instant_walk keys player =
   { player
-  | p = { x = player.p.x + dt * player.v.x
-        , y = player.p.y + dt * player.v.y
-        }
-  }
-
-
-walk : Keys -> Player -> Player
-walk keys player =
-  { player
-  | v = { x = toFloat keys.x / 10
-        , y = toFloat (-keys.y) / 10  -- positive Y is down
+  | p = { x = player.p.x + keys.x
+        , y = player.p.y - keys.y  -- player.p's positive Y is down, keys.y's positive Y is up
         }
   }
 
@@ -147,15 +144,15 @@ view model =
       image 28 28 src
 
     level_dp = Vec.init
-    player_dp = { x = round (model.player.p.x * 28)
-                , y = round (model.player.p.y * 28)
+    player_dp = { x = model.player.p.x * 28
+                , y = model.player.p.y * 28
                 }
     camera_dp = { x = player_dp.x - (320-14)
                 , y = player_dp.y - (240-14)
                 }
     bg_dp = camera_dp
     
-    debug = (model.player.v.x, model.player.v.y)
+    debug = (model.player.p.x, model.player.p.y)
     
     deltaPosition : Vec Int -> Element -> Element
     deltaPosition dp =
