@@ -18,11 +18,7 @@ type alias Model =
   , y : Float
   , vx : Float
   , vy : Float
-  , dir : Direction
   }
-
-
-type Direction = Left | Right
 
 
 type alias Keys = { x:Int, y:Int }
@@ -34,7 +30,6 @@ init =
   , y = 0
   , vx = 0
   , vy = 0
-  , dir = Right
   }
 
 
@@ -77,15 +72,6 @@ walk : Keys -> Model -> Model
 walk keys player =
   { player
   | vx = toFloat keys.x
-  , dir =
-      if keys.x < 0 then
-          Left
-
-      else if keys.x > 0 then
-          Right
-
-      else
-          player.dir
   }
 
 
@@ -106,11 +92,6 @@ view _ player =
 
       else
           "stand"
-
-    dir =
-      case player.dir of
-        Left -> "left"
-        Right -> "right"
 
     src =
       "/imgs/red.png"
