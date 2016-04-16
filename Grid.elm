@@ -38,8 +38,8 @@ map = Array.map << Array.map
 keys : Grid a -> List Coord
 keys grid =
   let
-    xs = [0 .. width grid]
-    ys = [0 .. height grid]
+    xs = [0 .. width grid-1]
+    ys = [0 .. height grid-1]
     key y x = { y = y, x = x }
     row_keys y = List.map (key y) xs
   in
