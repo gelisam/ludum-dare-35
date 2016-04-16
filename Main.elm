@@ -60,32 +60,32 @@ jump keys player =
 
 gravity : Float -> Model -> Model
 gravity dt player =
-  { player |
-      vy = if player.y > 0 then player.vy - dt/4 else 0
+  { player
+  | vy = if player.y > 0 then player.vy - dt/4 else 0
   }
 
 
 physics : Float -> Model -> Model
 physics dt player =
-  { player |
-      x = player.x + dt * player.vx,
-      y = max 0 (player.y + dt * player.vy)
+  { player
+  | x = player.x + dt * player.vx
+  , y = max 0 (player.y + dt * player.vy)
   }
 
 
 walk : Keys -> Model -> Model
 walk keys player =
-  { player |
-      vx = toFloat keys.x,
-      dir =
-        if keys.x < 0 then
-            Left
+  { player
+  | vx = toFloat keys.x
+  , dir =
+      if keys.x < 0 then
+          Left
 
-        else if keys.x > 0 then
-            Right
+      else if keys.x > 0 then
+          Right
 
-        else
-            player.dir
+      else
+          player.dir
   }
 
 
