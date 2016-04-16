@@ -53,24 +53,28 @@ instant_update : Keys.Action -> Model -> Model
 instant_update action model = case action of
   Keys.NoOp ->
     model
-  Keys.ArrowKey keys ->
-    { model
-    | coord = model.coord `Vec.plus` keys
-    }
+  Keys.LeftKey ->
+    { model | coord = model.coord `Vec.plus` { x = -1, y = 0 } }
+  Keys.RightKey ->
+    { model | coord = model.coord `Vec.plus` { x = 1, y = 0 } }
+  Keys.UpKey ->
+    if Powerup.id Jump `Set.member` model.powerupIds
+    then
+      { model | coord = model.coord `Vec.plus` { x = 0, y = -1 } }
+    else
+      model
+  Keys.DownKey ->
+    { model | coord = model.coord `Vec.plus` { x = 0, y = 1 } }
   Keys.RotationKey ->
     if Powerup.id Rotate `Set.member` model.powerupIds
     then
-      { model
-      | orientation = Shape.nextOrientation model.orientation
-      }
+      { model | orientation = Shape.nextOrientation model.orientation }
     else
       model
   Keys.ShapeShiftKey ->
     if Powerup.id ShapeShift `Set.member` model.powerupIds
     then
-      { model
-      | shape = Shape.nextShape model.shape
-      }
+      { model | shape = Shape.nextShape model.shape }
     else
       model
 

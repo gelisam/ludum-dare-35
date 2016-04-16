@@ -9,19 +9,21 @@ import Vec exposing (Vec)
 
 type Action
   = NoOp
-  | ArrowKey (Vec Int)
+  | LeftKey
+  | RightKey
+  | UpKey
+  | DownKey
   | RotationKey
   | ShapeShiftKey
 
 
 arrowAction : Vec Int -> Action
 arrowAction vec =
-  if (vec.x == 0 && vec.y == 0) || (vec.x /= 0 && vec.y /= 0)
-  then
-    NoOp
-  else
-    -- Keyboard's positive Y point up, Html's Y points down. We use Html's convention.
-    ArrowKey { vec | y = -vec.y }
+  if (vec.x == -1 && vec.y == 0) then LeftKey
+  else if (vec.x == 1 && vec.y == 0) then RightKey
+  else if (vec.x == 0 && vec.y == 1) then UpKey
+  else if (vec.x == 0 && vec.y == -1) then DownKey
+  else NoOp
 
 rotationAction : Bool -> Action
 rotationAction isDown = if isDown then RotationKey else NoOp
