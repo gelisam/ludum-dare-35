@@ -20,7 +20,7 @@ type alias Model =
 
 init : Model
 init =
-  { player = Player.init
+  { player = Player.init Level.player_start
   , level = Level.init
   }
 

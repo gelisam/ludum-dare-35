@@ -44,6 +44,20 @@ char_grid = Grid.init
   , "########"
   ]
 
+player_start : Coord
+player_start =
+  let
+    is_start_coord : Coord -> Bool
+    is_start_coord coord = Grid.get coord char_grid == Just '.'
+    
+    coords = Grid.keys char_grid
+    start_coords = List.filter is_start_coord coords
+  in
+    case start_coords of
+      [coord] -> coord
+      [] -> Debug.crash "level has no start position"
+      _ -> Debug.crash "level has more than one start position"
+
 block_grid : Grid Block
 block_grid =
   Grid.map (Maybe.withDefault White << Block.parse) char_grid

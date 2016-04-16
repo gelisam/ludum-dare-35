@@ -7,7 +7,7 @@ import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Keys
 import Shape exposing (Shape(..), ShapeId)
-import Vec exposing (Vec)
+import Vec exposing (Coord, Vec)
 import View exposing (PositionedElement)
 
 
@@ -21,10 +21,10 @@ type alias Model =
   }
 
 
-init : Model
-init =
+init : Coord -> Model
+init start_coord =
   { last_keys = Keys.NoOp
-  , p = Vec.init
+  , p = start_coord
   , shapeIds = Set.fromList [0..6]
   , shape = O
   }
