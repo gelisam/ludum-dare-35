@@ -5,39 +5,9 @@ import Graphics.Element as Element exposing (Element)
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Keys exposing (Keys)
+import Shape exposing (Shape)
 import Vec exposing (Vec)
 import View exposing (PositionedElement)
-
-
-char_shapes : List (Grid Char)
-char_shapes = List.map Grid.init
-  [ [ "YY"
-    , "YY"
-    ]
-  , [ "  O"
-    , "OOO"
-    ]
-  , [ "RR "
-    , " RR"
-    ]
-  , [ " GG"
-    , "GG "
-    ]
-  , [ "B  "
-    , "BBB"
-    ]
-  , [ " V "
-    , "VVV"
-    ]
-  , [ "CCCC"
-    ]
-  ]
-
-element_shape : Grid Char -> Element
-element_shape = Grid.view << Grid.map (Block.viewTransparent << Block.parse)
-
-element_shapes : List Element
-element_shapes = List.map element_shape char_shapes
 
 
 -- MODEL
