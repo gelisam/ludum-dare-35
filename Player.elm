@@ -2,12 +2,11 @@ module Player where
 
 import Graphics.Element as Element exposing (Element)
 
+import Keys exposing (Keys)
 import Vec exposing (Vec)
 
 
 -- MODEL
-
-type alias Keys = Vec Int
 
 type alias Model =
   { last_keys : Keys
@@ -42,7 +41,7 @@ instant_update : Keys -> Model -> Model
 instant_update keys model =
   { model
   | p = { x = model.p.x + keys.x
-        , y = model.p.y - keys.y  -- model.p's positive Y is down, keys.y's positive Y is up
+        , y = model.p.y + keys.y
         }
   }
 

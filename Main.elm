@@ -13,6 +13,7 @@ import Signal
 import String
 import Time exposing (..)
 
+import Keys exposing (Keys)
 import Player
 import Vec exposing (Vec)
 
@@ -84,8 +85,6 @@ level_element =
   in
     grid element_level
 
-
-type alias Keys = Vec Int
 
 type alias Model =
   { player : Player.Model
@@ -198,4 +197,4 @@ input =
   let
     delta = Signal.map (\t -> t/20) AnimationFrame.frame
   in
-    Signal.sampleOn delta (Signal.map2 (,) delta Keyboard.arrows)
+    Signal.sampleOn delta (Signal.map2 (,) delta Keys.signal)
