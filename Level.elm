@@ -3,7 +3,7 @@ module Level where
 import Graphics.Element exposing (..)
 import String
 
-import BlockColor exposing (Color(..))
+import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Vec
 import View exposing (PositionedElement)
@@ -44,9 +44,9 @@ int_level = Grid.init
   , "########"
   ]
 
-color_level : Grid Color
+color_level : Grid Block
 color_level =
-  Grid.map (Maybe.withDefault White << BlockColor.parse) int_level
+  Grid.map (Maybe.withDefault White << Block.parse) int_level
 
 
 -- UPDATE
@@ -62,7 +62,7 @@ update NoOp model = model
 
 element_level : Grid Element
 element_level =
-    Grid.map BlockColor.viewOpaque color_level
+    Grid.map Block.viewOpaque color_level
 
 level_element : Element
 level_element =

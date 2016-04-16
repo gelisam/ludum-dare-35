@@ -1,10 +1,10 @@
-module BlockColor where
+module Block where
 
 import Graphics.Element as Element exposing (Element)
 import String
 
 
-type Color
+type Block
   = White
   | Grey
   | Blue
@@ -16,7 +16,7 @@ type Color
   | Yellow
 
 
-parse : Char -> Maybe Color
+parse : Char -> Maybe Block
 parse char = case char of
   '#' -> Just Grey
   'B' -> Just Blue
@@ -29,10 +29,10 @@ parse char = case char of
   _   -> Nothing
 
 
-viewOpaque : Color -> Element
+viewOpaque : Block -> Element
 viewOpaque color =
   Element.image 28 28 ("/imgs/" ++ String.toLower (toString color) ++ ".png")
 
-viewTransparent : Maybe Color -> Element
+viewTransparent : Maybe Block -> Element
 viewTransparent = 
   Maybe.map viewOpaque >> Maybe.withDefault (Element.spacer 28 28)

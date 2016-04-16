@@ -4,7 +4,7 @@ import Array exposing (Array)
 import Graphics.Element as Element exposing (..)
 import String
 
-import Color exposing (Color(..))
+import Block exposing (Block(..))
 
 
 type alias Grid a = Array (Array a)
