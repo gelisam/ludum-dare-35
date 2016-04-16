@@ -86,11 +86,14 @@ level_element =
     grid element_level
 
 
+type alias Vec a =
+  { x : a
+  , y : a
+  }
+
 type alias Model =
-  { x : Float
-  , y : Float
-  , vx : Float
-  , vy : Float
+  { p : Vec Float
+  , v : Vec Float
   }
 
 
@@ -99,10 +102,8 @@ type alias Keys = { x:Int, y:Int }
 
 init : Model
 init =
-  { x = 0
-  , y = 0
-  , vx = 0
-  , vy = 0
+  { p = {x = 0, y = 0}
+  , v = {x = 0, y = 0}
   }
 
 
@@ -118,16 +119,18 @@ update (dt, keys) player =
 physics : Float -> Model -> Model
 physics dt player =
   { player
-  | x = player.x + dt * player.vx
-  , y = player.y + dt * player.vy
+  | p = { x = player.p.x + dt * player.v.x
+        , y = player.p.y + dt * player.v.y
+        }
   }
 
 
 walk : Keys -> Model -> Model
 walk keys player =
   { player
-  | vx = toFloat keys.x / 10
-  , vy = toFloat (-keys.y) / 10  -- positive Y is down
+  | v = { x = toFloat keys.x / 10
+        , y = toFloat (-keys.y) / 10  -- positive Y is down
+        }
   }
 
 
@@ -147,14 +150,14 @@ view _ player =
 
     level_dx = 0
     level_dy = 0
-    player_dx = round (player.x * 28)
-    player_dy = round (player.y * 28)
+    player_dx = round (player.p.x * 28)
+    player_dy = round (player.p.y * 28)
     camera_dx = player_dx - (320-14)
     camera_dy = player_dy - (240-14)
     bg_dx = camera_dx
     bg_dy = camera_dy
     
-    debug = (player.vx, player.vy)
+    debug = (player.v.x, player.v.y)
     
     everything =
       layers
