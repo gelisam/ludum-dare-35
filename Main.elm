@@ -13,7 +13,6 @@ import Maybe
 import Signal
 import String
 import Time exposing (..)
-import Window
 
 import Vec exposing (Vec)
 
@@ -138,8 +137,8 @@ walk keys player =
 
 -- VIEW
 
-view : (Int, Int) -> Model -> Html
-view _ model =
+view : Model -> Html
+view model =
   let
     src =
       "/imgs/red.png"
@@ -225,7 +224,7 @@ view _ model =
 
 main : Signal Html
 main =
-  Signal.map2 view Window.dimensions (Signal.foldp update init input)
+  Signal.map view (Signal.foldp update init input)
 
 
 input : Signal (Float, Keys)
