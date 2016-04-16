@@ -2,7 +2,6 @@ module Main where
 
 import AnimationFrame
 import Array exposing (Array)
-import Color exposing (..)
 import Debug
 import Graphics.Element exposing (..)
 import Html exposing (Html)
@@ -13,6 +12,7 @@ import Signal
 import String
 import Time exposing (..)
 
+import BlockColor exposing (Color(..))
 import Keys exposing (Keys)
 import Player
 import Vec exposing (Vec)
@@ -20,17 +20,15 @@ import Vec exposing (Vec)
 
 -- MODEL
 
-type Color
-  = White  -- ' '
-  | Grey   -- '#'
-  | Blue   -- 'b' for upgrade, 'B' for block
-  | Cyan   -- 'c' for upgrade, 'C' for block
-  | Green  -- 'g' for upgrade, 'G' for block
-  | Orange -- 'o' for upgrade, 'O' for block
-  | Red    -- 'r' for upgrade, 'R' for block
-  | Violet -- 'v' for upgrade, 'V' for block
-  | Yellow -- 'y' for upgrade, 'Y' for block
-
+-- ' ' for floor
+-- '#' for wall
+-- 'b' for upgrade, 'B' for block
+-- 'c' for upgrade, 'C' for block
+-- 'g' for upgrade, 'G' for block
+-- 'o' for upgrade, 'O' for block
+-- 'r' for upgrade, 'R' for block
+-- 'v' for upgrade, 'V' for block
+-- 'y' for upgrade, 'Y' for block
 -- '.' for player position, '!' for goal
 int_level : List String
 int_level =
