@@ -145,14 +145,17 @@ view _ player =
     playerImage =
       image 28 28 src
 
-    bg_dx = -(round player.x)
-    bg_dy = round player.y
+    camera_dx = 320-14
+    camera_dy = 240-14
+    bg_dx = -(round player.x) + camera_dx
+    bg_dy = round player.y + camera_dy
     
     everything =
       layers
         [ level_element
             |> container 640 480 (topLeftAt (absolute bg_dx) (absolute bg_dy))
         , playerImage
+            |> container 640 480 (topLeftAt (absolute camera_dx) (absolute camera_dy))
         ]
     
     top_style = Attributes.style
