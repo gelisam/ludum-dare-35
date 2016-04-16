@@ -15,7 +15,6 @@ import View
 
 type alias Model =
   { player : Player.Model
-  , level : Level.Model
   , powerups : List (Coord, Powerup)
   }
 
@@ -23,7 +22,6 @@ type alias Model =
 init : Model
 init =
   { player = Player.init Level.player_start
-  , level = Level.init
   , powerups = Level.powerups_start
   }
 
@@ -41,7 +39,6 @@ update (dt, keys) model =
     else
       { model
       | player = player'
-      , level = Level.update Level.NoOp model.level
       }
 
 
@@ -52,7 +49,7 @@ view model = View.view
   { camera =
       model.player.p
   , elements =
-      Level.view model.level
+      Level.view
         :: Player.view model.player
         :: List.map (\(coord, powerup) -> (coord, Powerup.view powerup)) model.powerups
   , debug = toString

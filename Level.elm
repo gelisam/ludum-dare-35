@@ -11,14 +11,6 @@ import Vec exposing (Coord)
 import View exposing (PositionedElement)
 
 
--- MODEL
-
-type alias Model = ()
-
-init : Model
-init = ()
-
-
 -- ' ' for floor
 -- '#' for wall
 -- 'B', 'C', 'G', 'O', 'R', 'V', and 'Y' for colored blocks
@@ -130,15 +122,6 @@ collides level_coord player_grid =
     List.any collidesAt player_coords
 
 
--- UPDATE
-
-type Action =
-  NoOp
-
-update : Action -> Model -> Model
-update NoOp model = model
-
-
 -- VIEW
 
 element_grid : Grid Element
@@ -149,5 +132,5 @@ element : Element
 element =
   Grid.view element_grid
 
-view : Model -> PositionedElement
-view () = (Vec.init, element)
+view : PositionedElement
+view = (Vec.init, element)
