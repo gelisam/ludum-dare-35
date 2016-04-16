@@ -126,8 +126,8 @@ physics dt player =
 walk : Keys -> Model -> Model
 walk keys player =
   { player
-  | vx = toFloat keys.x
-  , vy = toFloat keys.y
+  | vx = toFloat keys.x / 20
+  , vy = toFloat keys.y / 20
   }
 
 
@@ -147,8 +147,8 @@ view _ player =
 
     camera_dx = 320-14
     camera_dy = 240-14
-    bg_dx = -(round player.x) + camera_dx
-    bg_dy = round player.y + camera_dy
+    bg_dx = -(round (player.x * 28)) + camera_dx
+    bg_dy = round (player.y * 28) + camera_dy
     
     everything =
       layers
