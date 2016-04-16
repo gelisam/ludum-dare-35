@@ -148,23 +148,25 @@ view _ player =
     playerImage =
       image 28 28 src
 
-    level_dx = 0
-    level_dy = 0
-    player_dx = round (player.p.x * 28)
-    player_dy = round (player.p.y * 28)
-    camera_dx = player_dx - (320-14)
-    camera_dy = player_dy - (240-14)
-    bg_dx = camera_dx
-    bg_dy = camera_dy
+    level_dp = { x = 0
+               , y = 0
+               }
+    player_dp = { x = round (player.p.x * 28)
+                , y = round (player.p.y * 28)
+                }
+    camera_dp = { x = player_dp.x - (320-14)
+                , y = player_dp.y - (240-14)
+                }
+    bg_dp = camera_dp
     
     debug = (player.v.x, player.v.y)
     
     everything =
       layers
         [ level_element
-            |> container 640 480 (topLeftAt (absolute (level_dx - camera_dx)) (absolute (level_dy - camera_dy)))
+            |> container 640 480 (topLeftAt (absolute (level_dp.x - camera_dp.x)) (absolute (level_dp.y - camera_dp.y)))
         , playerImage
-            |> container 640 480 (topLeftAt (absolute (player_dx - camera_dx)) (absolute (player_dy - camera_dy)))
+            |> container 640 480 (topLeftAt (absolute (player_dp.x - camera_dp.x)) (absolute (player_dp.y - camera_dp.y)))
         ]
     
     top_style = Attributes.style
@@ -200,7 +202,7 @@ view _ player =
       , ("height", "480px")
       , ("background-image", "url('/imgs/grey.png')")
       , ("background-size", "28px 28px")
-      , ("background-position", toString (-bg_dx) ++ "px " ++ toString (-bg_dy) ++ "px")
+      , ("background-position", toString (-bg_dp.x) ++ "px " ++ toString (-bg_dp.y) ++ "px")
       ]
   in
     Html.div [top_style]
