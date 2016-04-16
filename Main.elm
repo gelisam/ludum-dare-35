@@ -8,6 +8,7 @@ import Graphics.Element exposing (..)
 import Html exposing (Html)
 import Html.Attributes as Attributes
 import Keyboard
+import Maybe
 import String
 import Time exposing (..)
 import Window
@@ -63,6 +64,24 @@ color_level =
     row = Array.fromList << List.map color << String.toList
   in
     Array.fromList (List.map row int_level)
+
+element_level : Array (Array Element)
+element_level =
+  let
+    block : Color -> Element
+    block color =
+      image 28 28 ("/imgs/" ++ String.toLower (toString color) ++ ".png")
+  in
+    Array.map (Array.map block) color_level
+
+level_element : Element
+level_element =
+  let
+    w = Array.length element_level
+    h = Array.length (Maybe.withDefault Array.empty (Array.get 0 element_level))
+    grid = flow down << Array.toList << Array.map (flow right << Array.toList)
+  in
+    grid element_level
 
 
 type alias Model =
@@ -126,7 +145,9 @@ view _ player =
 
     everything =
       collage w' h'
-        [ playerImage
+        [ level_element
+            |> toForm
+        , playerImage
             |> toForm
         ]
     
