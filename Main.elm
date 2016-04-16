@@ -1,18 +1,8 @@
 module Main where
 
 import AnimationFrame
-import Array exposing (Array)
-import Debug
-import Graphics.Element exposing (..)
 import Html exposing (Html)
-import Html.Attributes as Attributes
-import Keyboard
-import Maybe
-import Signal
-import String
-import Time exposing (..)
 
-import BlockColor exposing (Color(..))
 import Keys exposing (Keys)
 import Level
 import Player
