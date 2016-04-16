@@ -6,7 +6,7 @@ import Set exposing (Set)
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Keys
-import Powerup exposing (Powerup(..))
+import Powerup exposing (Powerup(..), PowerupId)
 import Shape exposing (Shape(..), Orientation(..))
 import Vec exposing (Coord, Vec)
 import View exposing (PositionedElement)
@@ -19,6 +19,7 @@ type alias Model =
   , coord : Coord
   , shape : Shape
   , orientation : Orientation
+  , powerupIds : Set PowerupId
   }
 
 
@@ -28,6 +29,7 @@ init start_coord =
   , coord = start_coord
   , shape = O
   , orientation = R0
+  , powerupIds = Set.empty
   }
 
 
@@ -56,13 +58,21 @@ instant_update action model = case action of
     | coord = model.coord `Vec.plus` keys
     }
   Keys.RotationKey ->
-    { model
-    | orientation = Shape.nextOrientation model.orientation
-    }
+    if Powerup.id Rotate `Set.member` model.powerupIds
+    then
+      { model
+      | orientation = Shape.nextOrientation model.orientation
+      }
+    else
+      model
   Keys.ShapeShiftKey ->
-    { model
-    | shape = Shape.nextShape model.shape
-    }
+    if Powerup.id ShapeShift `Set.member` model.powerupIds
+    then
+      { model
+      | shape = Shape.nextShape model.shape
+      }
+    else
+      model
 
 
 -- VIEW

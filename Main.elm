@@ -53,7 +53,7 @@ view model = View.view
         :: Player.view model.player
         :: List.map (\(coord, powerup) -> (coord, Powerup.view powerup)) model.powerups
   , debug = toString
-      model.player.last_keys
+      model.player.powerupIds
   }
 
 
