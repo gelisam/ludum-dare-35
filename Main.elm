@@ -14,84 +14,23 @@ import Time exposing (..)
 
 import BlockColor exposing (Color(..))
 import Keys exposing (Keys)
+import Level
 import Player
 import Vec exposing (Vec)
 
 
 -- MODEL
 
--- ' ' for floor
--- '#' for wall
--- 'b' for upgrade, 'B' for block
--- 'c' for upgrade, 'C' for block
--- 'g' for upgrade, 'G' for block
--- 'o' for upgrade, 'O' for block
--- 'r' for upgrade, 'R' for block
--- 'v' for upgrade, 'V' for block
--- 'y' for upgrade, 'Y' for block
--- '.' for player position, '!' for goal
-int_level : List String
-int_level =
-  [ "########"
-  , "#      #"
-  , "#  .   #"
-  , "#      #"
-  , "#      #"
-  , "#  BB  #"
-  , "#  BOO #"
-  , "#G B O #"
-  , "#GGYYO #"
-  , "#OGYYV #"
-  , "#ORRVV #"
-  , "#OORRV!#"
-  , "########"
-  ]
-
-color_level : Array (Array Color)
-color_level =
-  let
-    color : Char -> Color
-    color char = case char of
-      ' ' -> White
-      'B' -> Blue
-      'C' -> Cyan
-      'G' -> Green
-      'O' -> Orange
-      'R' -> Red
-      'V' -> Violet
-      'Y' -> Yellow
-      _   -> Grey
-    
-    row : String -> Array Color
-    row = Array.fromList << List.map color << String.toList
-  in
-    Array.fromList (List.map row int_level)
-
-element_level : Array (Array Element)
-element_level =
-  let
-    block : Color -> Element
-    block color =
-      image 28 28 ("/imgs/" ++ String.toLower (toString color) ++ ".png")
-  in
-    Array.map (Array.map block) color_level
-
-level_element : Element
-level_element =
-  let
-    grid = flow down << Array.toList << Array.map (flow right << Array.toList)
-  in
-    grid element_level
-
-
 type alias Model =
   { player : Player.Model
+  , level : Level.Model
   }
 
 
 init : Model
 init =
   { player = Player.init
+  , level = Level.init
   }
 
 
@@ -101,6 +40,7 @@ update : (Float, Keys) -> Model -> Model
 update (dt, keys) model =
   { model
   | player = Player.update keys model.player
+  , level = Level.update Level.NoOp model.level
   }
 
 
@@ -129,7 +69,7 @@ view model =
     
     everything =
       layers
-        [ level_element
+        [ Level.view model.level
             |> deltaPosition level_dp
         , Player.view model.player
             |> deltaPosition player_dp
