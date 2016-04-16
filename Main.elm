@@ -6,7 +6,8 @@ import Html exposing (Html)
 import Keys
 import Level
 import Player
-import Powerup exposing (Powerup)
+import Powerup exposing (Powerup(..))
+import Powerups exposing (Powerups)
 import Vec exposing (Coord, Vec)
 import View
 
@@ -15,7 +16,7 @@ import View
 
 type alias Model =
   { player : Player.Model
-  , powerups : List (Coord, Powerup)
+  , powerups : Powerups
   }
 
 
@@ -37,9 +38,14 @@ update (dt, keys) model =
     if collision
     then model
     else
-      { model
-      | player = player'
-      }
+      let
+        (pickedPowerups, remainingPowerups) =
+          Powerups.pickup player'.coord (Player.block_grid player') model.powerups
+      in
+        { model
+        | player = List.foldr Player.pickup player' pickedPowerups
+        , powerups = remainingPowerups
+        }
 
 
 -- VIEW
@@ -51,7 +57,7 @@ view model = View.view
   , elements =
       Level.view
         :: Player.view model.player
-        :: List.map (\(coord, powerup) -> (coord, Powerup.view powerup)) model.powerups
+        :: Powerups.view model.powerups
   , debug = toString
       model.player.powerupIds
   }

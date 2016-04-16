@@ -48,7 +48,6 @@ update action model =
     in
       { model' | last_keys = action }
 
-
 instant_update : Keys.Action -> Model -> Model
 instant_update action model = case action of
   Keys.NoOp ->
@@ -77,6 +76,18 @@ instant_update action model = case action of
       { model | shape = Shape.nextShape model.shape }
     else
       model
+
+pickup : Powerup -> Model -> Model
+pickup powerup model = case powerup of
+  FixedShape shape orientation ->
+    { model
+    | shape = shape
+    , orientation = orientation
+    }
+  _ ->
+    { model
+    | powerupIds = Set.insert (Powerup.id powerup) model.powerupIds
+    }
 
 
 -- VIEW

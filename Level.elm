@@ -6,6 +6,7 @@ import String
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Powerup exposing (Powerup(..))
+import Powerups exposing (Powerups)
 import Shape exposing (Shape(..), Orientation(..))
 import Vec exposing (Coord)
 import View exposing (PositionedElement)
@@ -20,16 +21,16 @@ import View exposing (PositionedElement)
 char_grid : Grid Char
 char_grid = Grid.init
   [ "########"
-  , "#.    *#"
+  , "#.     #"
+  , "#      #"
   , "#     *#"
-  , "#     *#"
-  , "#******#"
-  , "#**BB**#"
-  , "#**BOO*#"
-  , "#G*B O*#"
-  , "#GGYYO*#"
-  , "#OGYYV*#"
-  , "#ORRVV*#"
+  , "#      #"
+  , "#  BB  #"
+  , "#  BOO #"
+  , "#G B O #"
+  , "#GGYYO #"
+  , "#OGYYV #"
+  , "#ORRVV #"
   , "#OORRV!#"
   , "########"
   ]
@@ -75,7 +76,7 @@ player_start =
       [] -> Debug.crash "level has no start position"
       _ -> Debug.crash "level has more than one start position"
 
-powerups_start : List (Coord, Powerup)
+powerups_start : Powerups
 powerups_start =
   let
     is_powerup_coord : Coord -> Bool
@@ -84,7 +85,7 @@ powerups_start =
     coords = Grid.keys char_grid
     powerup_coords = List.filter is_powerup_coord coords
   in
-    List.map2 (,) powerup_coords powerups
+    Powerups.fromList <| List.map2 (,) powerup_coords powerups
 
 block_grid : Grid Block
 block_grid =
