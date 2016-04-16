@@ -4,7 +4,7 @@ import Graphics.Element as Element exposing (Element)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
-import Keys exposing (Keys)
+import Keys
 import Shape exposing (Shape(..))
 import Vec exposing (Vec)
 import View exposing (PositionedElement)
@@ -13,15 +13,15 @@ import View exposing (PositionedElement)
 -- MODEL
 
 type alias Model =
-  { last_keys : Keys
-  , p : Keys
+  { last_keys : Keys.Action
+  , p : Vec Int
   , shape : Shape
   }
 
 
 init : Model
 init =
-  { last_keys = Vec.init
+  { last_keys = Keys.NoOp
   , p = Vec.init
   , shape = O
   }
@@ -29,7 +29,7 @@ init =
 
 -- UPDATE
 
-type alias Action = Keys
+type alias Action = Keys.Action
 
 update : Action -> Model -> Model
 update action model =
@@ -43,11 +43,18 @@ update action model =
       { model' | last_keys = action }
 
 
-instant_update : Keys -> Model -> Model
-instant_update keys model =
-  { model
-  | p = model.p `Vec.plus` keys
-  }
+instant_update : Keys.Action -> Model -> Model
+instant_update action model = case action of
+  Keys.NoOp ->
+    model
+  Keys.ArrowKey keys ->
+    { model
+    | p = model.p `Vec.plus` keys
+    }
+  Keys.ShapeShiftKey ->
+    { model
+    | shape = I
+    }
 
 
 -- VIEW

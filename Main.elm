@@ -3,7 +3,7 @@ module Main where
 import AnimationFrame
 import Html exposing (Html)
 
-import Keys exposing (Keys)
+import Keys
 import Level
 import Player
 import Vec exposing (Vec)
@@ -27,7 +27,7 @@ init =
 
 -- UPDATE
 
-update : (Float, Keys) -> Model -> Model
+update : (Float, Keys.Action) -> Model -> Model
 update (dt, keys) model =
   { model
   | player = Player.update keys model.player
@@ -46,7 +46,7 @@ view model = View.view
       , Player.view model.player
       ]
   , debug = toString
-      (model.player.p.x, model.player.p.y)
+      model.player.last_keys
   }
 
 
@@ -57,7 +57,7 @@ main =
   Signal.map view (Signal.foldp update init input)
 
 
-input : Signal (Float, Keys)
+input : Signal (Float, Keys.Action)
 input =
   let
     delta = Signal.map (\t -> t/20) AnimationFrame.frame
