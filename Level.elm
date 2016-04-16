@@ -5,6 +5,8 @@ import String
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
+import Powerup exposing (Powerup(..))
+import Shape exposing (Shape(..), Orientation(..))
 import Vec exposing (Coord)
 import View exposing (PositionedElement)
 
@@ -19,29 +21,52 @@ init = ()
 
 -- ' ' for floor
 -- '#' for wall
--- 'b' for upgrade, 'B' for block
--- 'c' for upgrade, 'C' for block
--- 'g' for upgrade, 'G' for block
--- 'o' for upgrade, 'O' for block
--- 'r' for upgrade, 'R' for block
--- 'v' for upgrade, 'V' for block
--- 'y' for upgrade, 'Y' for block
--- '.' for player position, '!' for goal
+-- 'B', 'C', 'G', 'O', 'R', 'V', and 'Y' for colored blocks
+-- '*' for powerup
+-- '.' for player position
+-- '!' for goal
 char_grid : Grid Char
 char_grid = Grid.init
   [ "########"
-  , "#      #"
-  , "#  .   #"
-  , "#      #"
-  , "#      #"
-  , "#  BB  #"
-  , "#  BOO #"
-  , "#G B O #"
-  , "#GGYYO #"
-  , "#OGYYV #"
-  , "#ORRVV #"
+  , "#.    *#"
+  , "#     *#"
+  , "#     *#"
+  , "#******#"
+  , "#**BB**#"
+  , "#**BOO*#"
+  , "#G*B O*#"
+  , "#GGYYO*#"
+  , "#OGYYV*#"
+  , "#ORRVV*#"
   , "#OORRV!#"
   , "########"
+  ]
+
+powerups : List Powerup
+powerups =
+  [ Jump
+  , Rotate
+  , ShapeShift
+  , FixedShape I R0
+  , FixedShape O R0
+  , FixedShape I R0
+  , FixedShape I R1
+  , FixedShape S R0
+  , FixedShape S R1
+  , FixedShape Z R0
+  , FixedShape Z R1
+  , FixedShape L R0
+  , FixedShape L R1
+  , FixedShape L R2
+  , FixedShape L R3
+  , FixedShape J R0
+  , FixedShape J R1
+  , FixedShape J R2
+  , FixedShape J R3
+  , FixedShape T R0
+  , FixedShape T R1
+  , FixedShape T R2
+  , FixedShape T R3
   ]
 
 player_start : Coord
@@ -57,6 +82,17 @@ player_start =
       [coord] -> coord
       [] -> Debug.crash "level has no start position"
       _ -> Debug.crash "level has more than one start position"
+
+powerups_start : List (Coord, Powerup)
+powerups_start =
+  let
+    is_powerup_coord : Coord -> Bool
+    is_powerup_coord coord = Grid.get coord char_grid == Just '*'
+    
+    coords = Grid.keys char_grid
+    powerup_coords = List.filter is_powerup_coord coords
+  in
+    List.map2 (,) powerup_coords powerups
 
 block_grid : Grid Block
 block_grid =

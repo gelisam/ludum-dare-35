@@ -6,6 +6,7 @@ import Set exposing (Set)
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Keys
+import Powerup exposing (Powerup(..))
 import Shape exposing (Shape(..), Orientation(..))
 import Vec exposing (Coord, Vec)
 import View exposing (PositionedElement)

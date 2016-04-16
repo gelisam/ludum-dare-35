@@ -6,7 +6,8 @@ import Html exposing (Html)
 import Keys
 import Level
 import Player
-import Vec exposing (Vec)
+import Powerup exposing (Powerup)
+import Vec exposing (Coord, Vec)
 import View
 
 
@@ -15,6 +16,7 @@ import View
 type alias Model =
   { player : Player.Model
   , level : Level.Model
+  , powerups : List (Coord, Powerup)
   }
 
 
@@ -22,6 +24,7 @@ init : Model
 init =
   { player = Player.init Level.player_start
   , level = Level.init
+  , powerups = Level.powerups_start
   }
 
 
@@ -49,9 +52,9 @@ view model = View.view
   { camera =
       model.player.p
   , elements =
-      [ Level.view model.level
-      , Player.view model.player
-      ]
+      Level.view model.level
+        :: Player.view model.player
+        :: List.map (\(coord, powerup) -> (coord, Powerup.view powerup)) model.powerups
   , debug = toString
       model.player.last_keys
   }
