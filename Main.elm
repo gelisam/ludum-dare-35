@@ -28,8 +28,8 @@ type Direction = Left | Right
 type alias Keys = { x:Int, y:Int }
 
 
-mario : Model
-mario =
+init : Model
+init =
   { x = 0
   , y = 0
   , vx = 0
@@ -41,8 +41,8 @@ mario =
 -- UPDATE
 
 update : (Float, Keys) -> Model -> Model
-update (dt, keys) mario =
-  mario
+update (dt, keys) player =
+  player
     |> gravity dt
     |> jump keys
     |> walk keys
@@ -50,32 +50,32 @@ update (dt, keys) mario =
 
 
 jump : Keys -> Model -> Model
-jump keys mario =
-  if keys.y > 0 && mario.vy == 0 then
-      { mario | vy = 6.0 }
+jump keys player =
+  if keys.y > 0 && player.vy == 0 then
+      { player | vy = 6.0 }
 
   else
-      mario
+      player
 
 
 gravity : Float -> Model -> Model
-gravity dt mario =
-  { mario |
-      vy = if mario.y > 0 then mario.vy - dt/4 else 0
+gravity dt player =
+  { player |
+      vy = if player.y > 0 then player.vy - dt/4 else 0
   }
 
 
 physics : Float -> Model -> Model
-physics dt mario =
-  { mario |
-      x = mario.x + dt * mario.vx,
-      y = max 0 (mario.y + dt * mario.vy)
+physics dt player =
+  { player |
+      x = player.x + dt * player.vx,
+      y = max 0 (player.y + dt * player.vy)
   }
 
 
 walk : Keys -> Model -> Model
-walk keys mario =
-  { mario |
+walk keys player =
+  { player |
       vx = toFloat keys.x,
       dir =
         if keys.x < 0 then
@@ -85,42 +85,42 @@ walk keys mario =
             Right
 
         else
-            mario.dir
+            player.dir
   }
 
 
 -- VIEW
 
 view : (Int, Int) -> Model -> Html
-view _ mario =
+view _ player =
   let
     (w',h') = (640, 480)
     (w,h) = (toFloat w', toFloat h')
 
     verb =
-      if mario.y > 0 then
+      if player.y > 0 then
           "jump"
 
-      else if mario.vx /= 0 then
+      else if player.vx /= 0 then
           "walk"
 
       else
           "stand"
 
     dir =
-      case mario.dir of
+      case player.dir of
         Left -> "left"
         Right -> "right"
 
     src =
       "/imgs/red.png"
 
-    marioImage =
+    playerImage =
       image 28 28 src
 
     everything =
       collage w' h'
-        [ marioImage
+        [ playerImage
             |> toForm
         ]
     
@@ -157,7 +157,7 @@ view _ mario =
       , ("height", "480px")
       , ("background-image", "url('/imgs/grey.png')")
       , ("background-size", "28px 28px")
-      , ("background-position", toString (-mario.x) ++ "px " ++ toString mario.y ++ "px")
+      , ("background-position", toString (-player.x) ++ "px " ++ toString player.y ++ "px")
       ]
   in
     Html.div [top_style]
@@ -173,7 +173,7 @@ view _ mario =
 
 main : Signal Html
 main =
-  Signal.map2 view Window.dimensions (Signal.foldp update mario input)
+  Signal.map2 view Window.dimensions (Signal.foldp update init input)
 
 
 input : Signal (Float, Keys)
