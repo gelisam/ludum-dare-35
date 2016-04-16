@@ -27,9 +27,12 @@ init : Coord -> Model
 init start_coord =
   { last_keys = Keys.NoOp
   , coord = start_coord
-  , shape = O
+  -- , shape = I
+  -- , orientation = R0
+  -- , powerupIds = Set.empty
+  , shape = T
   , orientation = R0
-  , powerupIds = Set.empty
+  , powerupIds = Set.fromList <| List.map Powerup.id [Jump]
   }
 
 
