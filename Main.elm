@@ -66,16 +66,6 @@ view _ player =
     (w',h') = (640, 480)
     (w,h) = (toFloat w', toFloat h')
 
-    verb =
-      if player.y > 0 then
-          "jump"
-
-      else if player.vx /= 0 then
-          "walk"
-
-      else
-          "stand"
-
     src =
       "/imgs/red.png"
 
