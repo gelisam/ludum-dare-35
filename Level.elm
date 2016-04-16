@@ -27,8 +27,8 @@ init = ()
 -- 'v' for upgrade, 'V' for block
 -- 'y' for upgrade, 'Y' for block
 -- '.' for player position, '!' for goal
-int_level : Grid Char
-int_level = Grid.init
+char_grid : Grid Char
+char_grid = Grid.init
   [ "########"
   , "#      #"
   , "#  .   #"
@@ -44,9 +44,9 @@ int_level = Grid.init
   , "########"
   ]
 
-block_level : Grid Block
-block_level =
-  Grid.map (Maybe.withDefault White << Block.parse) int_level
+block_grid : Grid Block
+block_grid =
+  Grid.map (Maybe.withDefault White << Block.parse) char_grid
 
 
 obstacle : Block -> Bool
@@ -70,7 +70,7 @@ collides level_coord player_grid =
     collidesAt player_coord =
       let
         player_block = Maybe.withDefault Nothing (Grid.get player_coord player_grid)
-        level_block = Grid.get (player_coord `Vec.plus` level_coord) block_level
+        level_block = Grid.get (player_coord `Vec.plus` level_coord) block_grid
       in
         collidesWith player_block level_block
 
@@ -91,13 +91,13 @@ update NoOp model = model
 
 -- VIEW
 
-element_level : Grid Element
-element_level =
-    Grid.map Block.viewOpaque block_level
+element_grid : Grid Element
+element_grid =
+    Grid.map Block.viewOpaque block_grid
 
-level_element : Element
-level_element =
-  Grid.view element_level
+element : Element
+element =
+  Grid.view element_grid
 
 view : Model -> PositionedElement
-view () = (Vec.init, level_element)
+view () = (Vec.init, element)
