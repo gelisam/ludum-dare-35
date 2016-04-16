@@ -70,9 +70,13 @@ main =
   Signal.map view (Signal.foldp update init input)
 
 
+-- disable animations
 input : Signal (Float, Keys.Action)
-input =
-  let
-    delta = Signal.map (\t -> t/20) AnimationFrame.frame
-  in
-    Signal.sampleOn delta (Signal.map2 (,) delta Keys.signal)
+input = Signal.map (\action -> (0, action)) Keys.signal
+
+-- input : Signal (Float, Keys.Action)
+-- input =
+--   let
+--     delta = Signal.map (\t -> t/20) AnimationFrame.frame
+--   in
+--     Signal.sampleOn delta (Signal.map2 (,) delta Keys.signal)
