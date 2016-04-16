@@ -4,7 +4,6 @@ import AnimationFrame
 import Array exposing (Array)
 import Color exposing (..)
 import Debug
-import Graphics.Collage exposing (..)
 import Graphics.Element exposing (..)
 import Html exposing (Html)
 import Html.Attributes as Attributes
@@ -14,6 +13,7 @@ import Signal
 import String
 import Time exposing (..)
 
+import Player
 import Vec exposing (Vec)
 
 
@@ -87,48 +87,23 @@ level_element =
 
 type alias Keys = Vec Int
 
-type alias Player =
-  { p : Vec Int
-  }
-
 type alias Model =
-  { last_keys : Keys
-  , player : Player
+  { player : Player.Model
   }
 
 
 init : Model
 init =
-  { last_keys = Vec.init
-  , player = { p = Vec.init
-             }
+  { player = Player.init
   }
 
 
 -- UPDATE
 
 update : (Float, Keys) -> Model -> Model
-update (dt, keys) =
-  walk keys
-
-
-walk : Keys -> Model -> Model
-walk keys model =
-  Debug.log (toString (model.last_keys, keys)) <| if model.last_keys == keys
-  then
-    model
-  else
-    { model
-    | last_keys = keys
-    , player = instant_walk keys model.player
-    }
-
-instant_walk : Keys -> Player -> Player
-instant_walk keys player =
-  { player
-  | p = { x = player.p.x + keys.x
-        , y = player.p.y - keys.y  -- player.p's positive Y is down, keys.y's positive Y is up
-        }
+update (dt, keys) model =
+  { model
+  | player = Player.update keys model.player
   }
 
 
@@ -137,12 +112,6 @@ instant_walk keys player =
 view : Model -> Html
 view model =
   let
-    src =
-      "/imgs/red.png"
-
-    playerImage =
-      image 28 28 src
-
     level_dp = Vec.init
     player_dp = { x = model.player.p.x * 28
                 , y = model.player.p.y * 28
@@ -167,7 +136,7 @@ view model =
       layers
         [ level_element
             |> deltaPosition level_dp
-        , playerImage
+        , Player.view model.player
             |> deltaPosition player_dp
         ]
     
