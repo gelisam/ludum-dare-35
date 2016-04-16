@@ -5,7 +5,7 @@ import Graphics.Element as Element exposing (Element)
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Keys exposing (Keys)
-import Shape exposing (Shape)
+import Shape exposing (Shape(..))
 import Vec exposing (Vec)
 import View exposing (PositionedElement)
 
@@ -15,6 +15,7 @@ import View exposing (PositionedElement)
 type alias Model =
   { last_keys : Keys
   , p : Keys
+  , shape : Shape
   }
 
 
@@ -22,6 +23,7 @@ init : Model
 init =
   { last_keys = Vec.init
   , p = Vec.init
+  , shape = O
   }
 
 
@@ -52,4 +54,4 @@ instant_update keys model =
 
 view : Model -> PositionedElement
 view model =
-  (model.p, Element.image 28 28 "/imgs/red.png")
+  (model.p, Shape.view model.shape)
