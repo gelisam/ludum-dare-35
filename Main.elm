@@ -91,9 +91,13 @@ type alias Vec a =
   , y : a
   }
 
-type alias Model =
+type alias Player =
   { p : Vec Float
   , v : Vec Float
+  }
+
+type alias Model =
+  { player : Player
   }
 
 
@@ -102,21 +106,24 @@ type alias Keys = { x:Int, y:Int }
 
 init : Model
 init =
-  { p = {x = 0, y = 0}
-  , v = {x = 0, y = 0}
+  { player = { p = {x = 0, y = 0}
+             , v = {x = 0, y = 0}
+             }
   }
 
 
 -- UPDATE
 
 update : (Float, Keys) -> Model -> Model
-update (dt, keys) player =
-  player
-    |> walk keys
-    |> physics dt
+update (dt, keys) model =
+  { model
+  | player = model.player
+      |> walk keys
+      |> physics dt
+  }
 
 
-physics : Float -> Model -> Model
+physics : Float -> Player -> Player
 physics dt player =
   { player
   | p = { x = player.p.x + dt * player.v.x
@@ -125,7 +132,7 @@ physics dt player =
   }
 
 
-walk : Keys -> Model -> Model
+walk : Keys -> Player -> Player
 walk keys player =
   { player
   | v = { x = toFloat keys.x / 10
@@ -137,7 +144,7 @@ walk keys player =
 -- VIEW
 
 view : (Int, Int) -> Model -> Html
-view _ player =
+view _ model =
   let
     (w',h') = (640, 480)
     (w,h) = (toFloat w', toFloat h')
@@ -151,15 +158,15 @@ view _ player =
     level_dp = { x = 0
                , y = 0
                }
-    player_dp = { x = round (player.p.x * 28)
-                , y = round (player.p.y * 28)
+    player_dp = { x = round (model.player.p.x * 28)
+                , y = round (model.player.p.y * 28)
                 }
     camera_dp = { x = player_dp.x - (320-14)
                 , y = player_dp.y - (240-14)
                 }
     bg_dp = camera_dp
     
-    debug = (player.v.x, player.v.y)
+    debug = (model.player.v.x, model.player.v.y)
     
     deltaPosition : Vec Int -> Element -> Element
     deltaPosition dp =
