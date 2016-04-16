@@ -29,10 +29,17 @@ init =
 
 update : (Float, Keys.Action) -> Model -> Model
 update (dt, keys) model =
-  { model
-  | player = Player.update keys model.player
-  , level = Level.update Level.NoOp model.level
-  }
+  let
+    player' = Player.update keys model.player
+    collision = Level.collides player'.p (Player.block_grid player')
+  in
+    if collision
+    then model
+    else
+      { model
+      | player = player'
+      , level = Level.update Level.NoOp model.level
+      }
 
 
 -- VIEW

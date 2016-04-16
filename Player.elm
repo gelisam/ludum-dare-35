@@ -62,6 +62,9 @@ instant_update action model = case action of
 
 -- VIEW
 
+block_grid : Model -> Grid (Maybe Block)
+block_grid = Shape.block_grid << .shape
+
 view : Model -> PositionedElement
 view model =
   (model.p, Shape.view model.shape)

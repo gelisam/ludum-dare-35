@@ -5,7 +5,7 @@ import String
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
-import Vec
+import Vec exposing (Coord)
 import View exposing (PositionedElement)
 
 
@@ -44,9 +44,40 @@ int_level = Grid.init
   , "########"
   ]
 
-color_level : Grid Block
-color_level =
+block_level : Grid Block
+block_level =
   Grid.map (Maybe.withDefault White << Block.parse) int_level
+
+
+obstacle : Block -> Bool
+obstacle block = block /= White
+
+collides : Coord -> Grid (Maybe Block) -> Bool
+collides level_coord player_grid =
+  let
+    collidesWith : Maybe Block -> Maybe Block -> Bool
+    collidesWith player_block level_block = case (player_block, level_block) of
+      (Nothing, _) ->
+        -- outside the player, no collision
+        False
+      (_, Nothing) ->
+        -- outside the level, grey everywhere
+        obstacle Grey
+      (_, Just block) ->
+        obstacle block
+    
+    collidesAt : Coord -> Bool
+    collidesAt player_coord =
+      let
+        player_block = Maybe.withDefault Nothing (Grid.get player_coord player_grid)
+        level_block = Grid.get (player_coord `Vec.plus` level_coord) block_level
+      in
+        collidesWith player_block level_block
+
+    player_coords : List Coord
+    player_coords = Grid.keys player_grid
+  in
+    List.any collidesAt player_coords
 
 
 -- UPDATE
@@ -62,7 +93,7 @@ update NoOp model = model
 
 element_level : Grid Element
 element_level =
-    Grid.map Block.viewOpaque color_level
+    Grid.map Block.viewOpaque block_level
 
 level_element : Element
 level_element =
