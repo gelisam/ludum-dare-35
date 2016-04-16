@@ -47,20 +47,8 @@ int_level =
 color_level : Array (Array Color)
 color_level =
   let
-    color : Char -> Color
-    color char = case char of
-      ' ' -> White
-      'B' -> Blue
-      'C' -> Cyan
-      'G' -> Green
-      'O' -> Orange
-      'R' -> Red
-      'V' -> Violet
-      'Y' -> Yellow
-      _   -> Grey
-    
     row : String -> Array Color
-    row = Array.fromList << List.map color << String.toList
+    row = Array.fromList << List.map BlockColor.opaqueColor << String.toList
   in
     Array.fromList (List.map row int_level)
 
@@ -78,12 +66,7 @@ update NoOp model = model
 
 element_level : Array (Array Element)
 element_level =
-  let
-    block : Color -> Element
-    block color =
-      image 28 28 ("/imgs/" ++ String.toLower (toString color) ++ ".png")
-  in
-    Array.map (Array.map block) color_level
+    (Array.map << Array.map) BlockColor.view color_level
 
 level_element : Element
 level_element =
