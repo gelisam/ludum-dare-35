@@ -1,12 +1,45 @@
 module Shape where
 
 import Graphics.Element as Element exposing (Element)
+import Set exposing (Set)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 
 
-type Shape = O | L | Z | S | J | T | I
+type Shape = O | L | J | Z | S | T | I
+type alias ShapeId = Int
+
+
+id : Shape -> ShapeId
+id shape = case shape of
+  O -> 0
+  L -> 1
+  J -> 2
+  Z -> 3
+  S -> 4
+  T -> 5
+  I -> 6
+
+next : Shape -> Shape
+next shape = case shape of
+  O -> L
+  L -> J
+  J -> Z
+  Z -> S
+  S -> T
+  T -> I
+  I -> O
+
+nextFrom : Set ShapeId -> Shape -> Shape
+nextFrom shapeIds shape =
+  let
+    shape' = next shape
+  in
+    if id shape' `Set.member` shapeIds
+    then shape'
+    else nextFrom shapeIds shape'
+
 
 char_grid : Shape -> Grid Char
 char_grid shape = case shape of
@@ -16,14 +49,14 @@ char_grid shape = case shape of
   L -> Grid.init [ "  O"
                  , "OOO"
                  ]
+  J -> Grid.init [ "B  "
+                 , "BBB"
+                 ]
   Z -> Grid.init [ "RR "
                  , " RR"
                  ]
   S -> Grid.init [ " GG"
                  , "GG "
-                 ]
-  J -> Grid.init [ "B  "
-                 , "BBB"
                  ]
   T -> Grid.init [ " V "
                  , "VVV"

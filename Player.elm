@@ -1,11 +1,12 @@
 module Player where
 
 import Graphics.Element as Element exposing (Element)
+import Set exposing (Set)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Keys
-import Shape exposing (Shape(..))
+import Shape exposing (Shape(..), ShapeId)
 import Vec exposing (Vec)
 import View exposing (PositionedElement)
 
@@ -15,6 +16,7 @@ import View exposing (PositionedElement)
 type alias Model =
   { last_keys : Keys.Action
   , p : Vec Int
+  , shapeIds : Set ShapeId
   , shape : Shape
   }
 
@@ -23,6 +25,7 @@ init : Model
 init =
   { last_keys = Keys.NoOp
   , p = Vec.init
+  , shapeIds = Set.fromList [0..6]
   , shape = O
   }
 
@@ -53,7 +56,7 @@ instant_update action model = case action of
     }
   Keys.ShapeShiftKey ->
     { model
-    | shape = I
+    | shape = Shape.nextFrom model.shapeIds model.shape
     }
 
 
