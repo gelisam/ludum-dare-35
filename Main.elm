@@ -3,6 +3,8 @@ module Main where
 import Color exposing (..)
 import Graphics.Collage exposing (..)
 import Graphics.Element exposing (..)
+import Html exposing (Html)
+import Html.Attributes as Attributes
 import Keyboard
 import Time exposing (..)
 import Window
@@ -88,7 +90,7 @@ walk keys mario =
 
 -- VIEW
 
-view : (Int, Int) -> Model -> Element
+view : (Int, Int) -> Model -> Html
 view (w',h') mario =
   let
     (w,h) = (toFloat w', toFloat h')
@@ -112,28 +114,35 @@ view (w',h') mario =
       "/imgs/red.png"
 
     marioImage =
-      image 35 35 src
+      image 28 28 src
 
     groundY = 62 - h/2
 
     position =
       (mario.x, mario.y + groundY)
-  in
-    collage w' h'
-      [ rect w h
-          |> filled (rgb 174 238 238)
-      , rect w 50
-          |> filled (rgb 74 167 43)
-          |> move (0, 24 - h/2)
-      , marioImage
-          |> toForm
-          |> move position
+    
+    everything =
+      collage w' h'
+        [ rect w h
+            |> filled (rgb 174 238 238)
+        , rect w 50
+            |> filled (rgb 74 167 43)
+            |> move (0, 24 - h/2)
+        , marioImage
+            |> toForm
+            |> move position
+        ]
+    
+    style = Attributes.style
+      [ ("image-rendering", "pixelated")
       ]
+  in
+    Html.div [style] [Html.fromElement everything]
 
 
 -- SIGNALS
 
-main : Signal Element
+main : Signal Html
 main =
   Signal.map2 view Window.dimensions (Signal.foldp update mario input)
 
