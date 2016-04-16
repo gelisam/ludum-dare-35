@@ -18,7 +18,7 @@ type alias Model =
 view : Model -> Html
 view model =
   let
-    camera_pixels = pixels model.camera `minus` { x = 320-14, y = 240-14 }
+    camera_pixels = pixels model.camera `minus` { x = 320-2*28, y = 240-2*28 }
     
     deltaPosition : Coord -> Element -> Element
     deltaPosition coord =
