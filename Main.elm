@@ -159,4 +159,4 @@ input =
   let
     delta = AnimationFrame.frame
   in
-    Signal.sampleOn delta (Signal.map2 (\dt keys -> { dt = dt, keys = keys }) delta Keys.signal)
+    Signal.sampleOn delta (Signal.map2 (\dt keys -> { dt = min dt 30, keys = keys }) delta Keys.signal)
