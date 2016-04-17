@@ -29,12 +29,12 @@ view coord powerup visible =
   { coord = coord
   , element = case powerup of
       FixedShape shape orientation _ ->
-        Element.image 28 28 ("/imgs/" ++ toString shape ++ "_" ++ toString orientation ++ ".png")
+        Element.image 28 28 ("imgs/" ++ toString shape ++ "_" ++ toString orientation ++ ".png")
       Jump ->
-        Element.image 28 28 "/imgs/jump.png"
+        Element.image 28 28 "imgs/jump.png"
       Rotate ->
-        Element.image 28 28 "/imgs/rotate.png"
+        Element.image 28 28 "imgs/rotate.png"
       ShapeShift ->
-        Element.image 28 28 "/imgs/shapeshift.png"
+        Element.image 28 28 "imgs/shapeshift.png"
   , visible = visible
   }

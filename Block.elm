@@ -31,7 +31,7 @@ parse char = case char of
 
 viewOpaque : Block -> Element
 viewOpaque color =
-  Element.image 28 28 ("/imgs/" ++ String.toLower (toString color) ++ ".png")
+  Element.image 28 28 ("imgs/" ++ String.toLower (toString color) ++ ".png")
 
 viewTransparent : Maybe Block -> Element
 viewTransparent = 

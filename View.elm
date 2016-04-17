@@ -88,7 +88,7 @@ view model =
     bg_style = Attributes.style
       [ ("width", "640px")
       , ("height", "480px")
-      , ("background-image", "url('/imgs/grey.png')")
+      , ("background-image", "url('imgs/grey.png')")
       , ("background-size", "28px 28px")
       , ("background-position", toString (-camera_pixels.x) ++ "px " ++ toString (-camera_pixels.y) ++ "px")
       ]
@@ -101,7 +101,7 @@ view model =
       ]
   in
     Html.div [top_style]
-      [ Html.img [title_style, Attributes.src "/imgs/title.png"] []
+      [ Html.img [title_style, Attributes.src "imgs/title.png"] []
       , Html.div [container_style]
           (Html.div [visible_layer_style] [Html.div [bg_style] []] :: everything)
       , Html.div [instructions_style] [model.instructions]
