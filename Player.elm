@@ -38,6 +38,10 @@ init start_coord =
   , powerupIds = Set.fromList <| List.map Powerup.id [Jump, Rotate, ShapeShift]
   }
 
+hasPowerup : Powerup -> Model -> Bool
+hasPowerup powerup model = 
+  Powerup.id powerup `Set.member` model.powerupIds
+
 
 -- UPDATE
 
@@ -94,7 +98,7 @@ keys_are_pressed keys model = case keys of
       model
   Keys.UpKey ->
     if
-      Powerup.id Jump `Set.member` model.powerupIds &&
+      hasPowerup Jump model &&
       (model.last_keys /= Keys.UpKey || model.inactive_dt > up_auto_repeat_delay)
     then
       { model
@@ -116,7 +120,7 @@ keys_are_pressed keys model = case keys of
       model
   Keys.RotationKey ->
     if
-      Powerup.id Rotate `Set.member` model.powerupIds &&
+      hasPowerup Rotate model &&
       (model.last_keys /= Keys.RotationKey)
     then
       { model
@@ -127,7 +131,7 @@ keys_are_pressed keys model = case keys of
       model
   Keys.ShapeShiftKey ->
     if
-      Powerup.id ShapeShift `Set.member` model.powerupIds &&
+      hasPowerup ShapeShift model &&
       (model.last_keys /= Keys.ShapeShiftKey)
     then
       { model

@@ -60,8 +60,22 @@ update action model =
       then model
       else
         { model | player = player' }
+          |> check_instructions action
           |> check_powerups
           |> check_ending
+
+check_instructions : Player.Action -> Model -> Model
+check_instructions action model = case (action.keys, model.instructions) of
+  (Keys.UpKey, Instructions.Intro) ->
+    { model
+    | instructions = Instructions.CannotRotate
+    }
+  (Keys.UpKey, Instructions.HowToUsePowerup Jump) ->
+    { model
+    | instructions = Instructions.UnlikelyJump
+    }
+  _ ->
+    model
 
 check_powerups : Model -> Model
 check_powerups model =
