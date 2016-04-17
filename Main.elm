@@ -4,6 +4,7 @@ import AnimationFrame
 import Html exposing (Html)
 import Time exposing (Time)
 
+import Camera
 import Ending
 import Instructions
 import Keys
@@ -18,7 +19,8 @@ import View
 -- MODEL
 
 type alias Model =
-  { player : Player.Model
+  { camera : Camera.Model
+  , player : Player.Model
   , powerups : Powerups
   , instructions : Instructions.Model
   , ending : Ending.Model
@@ -27,7 +29,8 @@ type alias Model =
 
 init : Model
 init =
-  { player = Player.init Level.player_start
+  { camera = Camera.init Level.player_start
+  , player = Player.init Level.player_start
   , powerups = Level.powerups_start
   , instructions = Instructions.init
   , ending = Ending.init Level.goal_coord
@@ -37,7 +40,12 @@ init =
 -- UPDATE
 
 update : Player.Action -> Model -> Model
-update action model =
+update action =
+  game_update action >>
+  camera_update action
+
+game_update : Player.Action -> Model -> Model
+game_update action model =
   if model.ending.has_ended
   then
     { model
@@ -98,13 +106,19 @@ check_ending model =
   else
     model
 
+camera_update : Player.Action -> Model -> Model
+camera_update action model =
+  { model
+  | camera = Camera.update { coord = model.player.coord, dt = action.dt } model.camera
+  }
+
 
 -- VIEW
 
 view : Model -> Html
 view model = View.view
   { camera =
-      model.player.coord
+      Camera.view model.camera
   , elements =
       [Level.view] ++
       Powerups.view model.powerups ++

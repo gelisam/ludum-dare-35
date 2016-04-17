@@ -10,7 +10,7 @@ import Vec exposing (..)
 type alias PositionedElement = (Coord, Element)
 
 type alias Model =
-  { camera : Coord
+  { camera : Pixels
   , elements : List PositionedElement
   , instructions : Html
   , debug : String
@@ -19,7 +19,7 @@ type alias Model =
 view : Model -> Html
 view model =
   let
-    camera_pixels = pixels model.camera `minus` { x = 320-2*28, y = 240-2*28 }
+    camera_pixels = model.camera
     
     deltaPosition : Coord -> Element -> Element
     deltaPosition coord =

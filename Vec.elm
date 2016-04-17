@@ -13,6 +13,12 @@ init =
   }
 
 
+map : (a -> b) -> Vec a -> Vec b
+map f vec =
+  { x = f vec.x
+  , y = f vec.y
+  }
+
 plus : Vec number -> Vec number -> Vec number
 plus v1 v2  =
   { x = v1.x + v2.x
@@ -37,6 +43,10 @@ type alias Coord = Vec Int
 
 -- units are pixels
 type alias Pixels = Vec Int
+type alias PixelsF = Vec Float
 
 pixels : Coord -> Pixels
 pixels = scale 28
+
+pixelsF : Coord -> PixelsF
+pixelsF = map toFloat << pixels
