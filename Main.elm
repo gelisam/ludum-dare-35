@@ -13,6 +13,7 @@ import Level
 import Player
 import Powerup exposing (Powerup(..))
 import Powerups exposing (Powerups)
+import Sound
 import Vec exposing (Coord, Vec)
 import View exposing (PositionedElement)
 
@@ -21,6 +22,7 @@ import View exposing (PositionedElement)
 
 type alias Model =
   { camera : Camera.Model
+  , sound : Sound.Model
   , player : Player.Model
   , blinking_duration : Time
   , blinking_player : Maybe Player.Model
@@ -37,6 +39,7 @@ goal_focus_point =
 init : Model
 init =
   { camera = Camera.init goal_focus_point
+  , sound = Sound.init
   , player = Player.init Level.player_start
   , blinking_duration = 0
   , blinking_player = Nothing
@@ -117,6 +120,7 @@ pickup_powerup powerup model =
   { model
   | player = Player.pickup powerup model.player
   , instructions = Instructions.HowToUsePowerup powerup
+  , sound = Sound.pickup powerup model.sound
   }
 
 check_ending : Model -> Model
@@ -177,9 +181,13 @@ viewPlayer model = case model.blinking_player of
 
 -- SIGNALS
 
+state : Signal Model
+state =
+  Signal.foldp update init input
+
 main : Signal Html
 main =
-  Signal.map view (Signal.foldp update init input)
+  Signal.map view state
 
 
 input : Signal Player.Action
@@ -188,3 +196,10 @@ input =
     delta = AnimationFrame.frame
   in
     Signal.sampleOn delta (Signal.map2 (\dt keys -> { dt = min dt 30, keys = keys }) delta Keys.signal)
+
+port soundEvent : Signal String
+port soundEvent =
+  state
+    |> Signal.map .sound
+    |> Sound.signal
+    |> Signal.map toString
