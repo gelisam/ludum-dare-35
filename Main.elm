@@ -4,6 +4,7 @@ import AnimationFrame
 import Html exposing (Html)
 import Time exposing (Time)
 
+import Ending
 import Keys
 import Level
 import Player
@@ -18,6 +19,7 @@ import View
 type alias Model =
   { player : Player.Model
   , powerups : Powerups
+  , ending : Ending.Model
   }
 
 
@@ -25,6 +27,7 @@ init : Model
 init =
   { player = Player.init Level.player_start
   , powerups = Level.powerups_start
+  , ending = Ending.init Level.goal_coord
   }
 
 
@@ -40,21 +43,32 @@ unlessCollision f player =
 
 update : Player.Action -> Model -> Model
 update action model =
-  let
-    player' = Player.update action model.player
-    collision = Level.collides player'.coord (Player.block_grid player')
-  in
-    if collision
-    then model
-    else
-      let
-        (pickedPowerups, remainingPowerups) =
-          Powerups.pickup player'.coord (Player.block_grid player') model.powerups
-      in
-        { model
-        | player = List.foldr (unlessCollision << Player.pickup) player' pickedPowerups
-        , powerups = remainingPowerups
-        }
+  if model.ending.has_ended
+  then
+    { model
+    | ending = Ending.update (action.dt, Ending.NoOp) model.ending
+    }
+  else
+    let
+      player' = Player.update action model.player
+      collision = Level.collides player'.coord (Player.block_grid player')
+    in
+      if collision
+      then model
+      else
+        let
+          (pickedPowerups, remainingPowerups) =
+            Powerups.pickup player'.coord (Player.block_grid player') model.powerups
+          ending_picked =
+            Ending.pickup player'.coord (Player.block_grid player') model.ending
+          ending_action =
+            if ending_picked then Ending.TheEnd else Ending.NoOp
+        in
+          { model
+          | player = List.foldr (unlessCollision << Player.pickup) player' pickedPowerups
+          , powerups = remainingPowerups
+          , ending = Ending.update (action.dt, ending_action) model.ending
+          }
 
 
 -- VIEW
@@ -66,9 +80,10 @@ view model = View.view
   , elements =
       [Level.view] ++
       Powerups.view model.powerups ++
-      [Player.view model.player]
+      [Player.view model.player] ++
+      Ending.view model.ending
   , debug = toString
-      (model.player.inactive_dt, Time.second)
+      (round (model.ending.elapsed / 100 * Time.millisecond))
   }
 
 

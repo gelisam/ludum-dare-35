@@ -4,6 +4,7 @@ import Graphics.Element exposing (..)
 import String
 
 import Block exposing (Block(..))
+import Ending
 import Grid exposing (Grid)
 import Powerup exposing (Powerup(..))
 import Powerups exposing (Powerups)
@@ -21,7 +22,7 @@ import View exposing (PositionedElement)
 char_grid : Grid Char
 char_grid = Grid.init
   [ "##########################################################################"
-  , "###########################################      #########################"
+  , "###########################################.     #########################"
   , "###########################################      #########################"
   , "###########################################      #########################"
   , "#########    ##############################      #########################"
@@ -39,7 +40,7 @@ char_grid = Grid.init
   , "###############    ##        ###############################  ############"
   , "##############    ####           ###########################  ############"
   , "#############    #######             #######################  #####*######"
-  , "#############    ########                      .              ###        #"
+  , "#############    ########                                     ###        #"
   , "#############   #############                                 ###      * #"
   , "############    #################  * ##########   ###############        #"
   , "############   #################### ###########   ## *                   #"
@@ -91,6 +92,20 @@ player_start =
       [coord] -> coord
       [] -> Debug.crash "level has no start position"
       _ -> Debug.crash "level has more than one start position"
+
+goal_coord : Coord
+goal_coord =
+  let
+    is_goal_coord : Coord -> Bool
+    is_goal_coord coord = Grid.get coord char_grid == Just '!'
+    
+    coords = Grid.keys char_grid
+    goal_coords = List.filter is_goal_coord coords
+  in
+    case goal_coords of
+      [coord] -> coord
+      [] -> Debug.crash "level has no goal position"
+      _ -> Debug.crash "level has more than one goal position"
 
 powerups_start : Powerups
 powerups_start =

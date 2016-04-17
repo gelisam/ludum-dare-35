@@ -33,8 +33,8 @@ init start_coord =
   -- , shape = I
   -- , orientation = R0
   -- , powerupIds = Set.empty
-  , shape = T
-  , orientation = R0
+  , shape = I
+  , orientation = R1
   , powerupIds = Set.fromList <| List.map Powerup.id [Jump]
   }
 
