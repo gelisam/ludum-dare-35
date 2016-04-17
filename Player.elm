@@ -1,6 +1,5 @@
 module Player where
 
-import Graphics.Element as Element exposing (Element)
 import Set exposing (Set)
 import Time exposing (Time)
 
@@ -18,6 +17,7 @@ import View exposing (PositionedElement)
 type alias Model =
   { last_keys : Keys.Action
   , inactive_dt : Time
+  , down_delay : Int
   , coord : Coord
   , shape : Shape
   , orientation : Orientation
@@ -29,6 +29,7 @@ init : Coord -> Model
 init start_coord =
   { last_keys = Keys.NoOp
   , inactive_dt = 0
+  , down_delay = 1000
   , coord = start_coord
   , shape = I
   , orientation = R0
@@ -71,9 +72,18 @@ down_auto_repeat_delay = 50 * Time.millisecond
 keys_are_pressed : Keys.Action -> Model -> Model
 keys_are_pressed keys model = case keys of
   Keys.NoOp ->
-    { model
-    | last_keys = Keys.NoOp
-    }
+    if model.inactive_dt > toFloat model.down_delay * Time.millisecond
+    then
+      let
+        model' = keys_are_pressed Keys.DownKey model
+      in
+        { model'
+        | down_delay = max 200 (model'.down_delay - 10)
+        }
+    else
+      { model
+      | last_keys = Keys.NoOp
+      }
   Keys.LeftKey ->
     if model.last_keys /= Keys.LeftKey || model.inactive_dt > normal_auto_repeat_delay
     then
