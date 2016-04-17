@@ -122,9 +122,10 @@ camera_update action model =
       camera_action =
         { coord = model.player.coord
         , dt = action.dt
-        , focus_points =
-            [goal_focus_point] ++
-            List.filter is_important_powerup powerups
+        , focus_points = List.concat
+            [ [goal_focus_point]
+            , List.filter is_important_powerup powerups
+            ]
         }
   in
     { model | camera = Camera.update camera_action model.camera }
@@ -136,11 +137,12 @@ view : Model -> Html
 view model = View.view
   { camera =
       Camera.view model.camera
-  , elements =
-      [Level.view] ++
-      Powerups.view model.powerups ++
-      [Player.view model.player] ++
-      Ending.view model.ending
+  , elements = List.concat
+      [ [Level.view]
+      , Powerups.view model.powerups
+      , [Player.view model.player]
+      , Ending.view model.ending
+      ]
   , instructions = Instructions.view model.instructions
   , debug = toString
       (round (model.ending.elapsed / 100 * Time.millisecond))
