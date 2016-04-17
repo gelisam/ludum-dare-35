@@ -195,8 +195,7 @@ view model = View.view
       , [Ending.view model.ending]
       ]
   , instructions = Instructions.view model.instructions
-  , debug = toString
-      (model.player.down_delay)
+  , debug = ""
   }
 
 viewPlayer : Model -> PositionedElement
