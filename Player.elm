@@ -166,4 +166,7 @@ block_grid model = Shape.block_grid model.shape model.orientation
 
 view : Model -> PositionedElement
 view model =
-  (model.coord, Shape.view model.shape model.orientation)
+  { coord = model.coord
+  , element = Shape.view model.shape model.orientation
+  , visible = True
+  }

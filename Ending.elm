@@ -122,27 +122,21 @@ element_grid2 =
     Grid.map Block.viewOpaque block_grid2
 
 
-view : Model -> List PositionedElement
+view : Model -> PositionedElement
 view model =
-  if model.has_ended
-  then
-    let
-      coord =
-        model.coord  `Vec.minus` { x = Grid.width char_grid0 - 1
-                                 , y = Grid.height char_grid0 - 1
-                                 }
-    in
+  { coord =
+      model.coord  `Vec.minus` { x = Grid.width char_grid0 - 1
+                               , y = Grid.height char_grid0 - 1
+                               }
+  , element =
       if model.elapsed < 1800 * Time.millisecond
       then
         if round (model.elapsed / 100 * Time.millisecond) % 2 == 0
         then
-          [ (coord, Grid.view element_grid1)
-          ]
+          Grid.view element_grid1
         else
-          [ (coord, Grid.view element_grid0)
-          ]
+          Grid.view element_grid0
       else
-        [ (coord, Grid.view element_grid2)
-        ]
-  else
-    []
+        Grid.view element_grid2
+  , visible = model.has_ended
+  }

@@ -7,7 +7,13 @@ import Graphics.Element exposing (..)
 import Vec exposing (..)
 
 
-type alias PositionedElement = (Coord, Element)
+type alias PositionedElement =
+  { coord : Coord
+  , element : Element
+  , visible : Bool -- due to react-style rendering optimizations,
+                   -- it's faster to display invisible elements
+                   -- than to remove them from the display list
+  }
 
 type alias Model =
   { camera : Pixels
@@ -21,18 +27,29 @@ view model =
   let
     camera_pixels = model.camera
     
-    deltaPosition : Coord -> Element -> Element
-    deltaPosition coord =
+    positionElement : PositionedElement -> Element
+    positionElement positionedElement =
       let
-        relative_pixels = pixels coord `minus` camera_pixels
+        relative_pixels = pixels positionedElement.coord `minus` camera_pixels
         position = topLeftAt
           (absolute relative_pixels.x)
           (absolute relative_pixels.y)
       in
-        container 640 480 position
+        container 640 480 position positionedElement.element
     
-    everything =
-      layers (List.map (uncurry deltaPosition) model.elements)
+    viewLayer : Bool -> Html -> Html
+    viewLayer visible html =
+      Html.div [if visible then visible_layer_style else invisible_layer_style] [html]
+    
+    viewPositionedElement : PositionedElement -> Html
+    viewPositionedElement positionedElement =
+      positionedElement
+        |> positionElement
+        |> Html.fromElement
+        |> viewLayer positionedElement.visible
+    
+    everything : List Html
+    everything = List.map viewPositionedElement model.elements
     
     top_style = Attributes.style
       [ ("image-rendering", "pixelated")
@@ -56,10 +73,16 @@ view model =
       , ("border", "4px solid black")
       ]
     
-    layer_style = Attributes.style
+    visible_layer_style = Attributes.style
       [ ("width", "0px")
       , ("height", "0px")
       , ("overflow", "visible")
+      ]
+    
+    invisible_layer_style = Attributes.style
+      [ ("width", "0px")
+      , ("height", "0px")
+      , ("overflow", "hidden")
       ]
     
     bg_style = Attributes.style
@@ -80,9 +103,7 @@ view model =
     Html.div [top_style]
       [ Html.img [title_style, Attributes.src "/imgs/title.png"] []
       , Html.div [container_style]
-          [ Html.div [layer_style] [Html.div [bg_style] []]
-          , Html.div [layer_style] [Html.fromElement everything]
-          ]
+          (Html.div [visible_layer_style] [Html.div [bg_style] []] :: everything)
       , Html.div [instructions_style] [model.instructions]
       , Html.div [instructions_style] [Html.text model.debug]
       ]

@@ -141,7 +141,7 @@ view model = View.view
       [ [Level.view]
       , Powerups.view model.powerups
       , [Player.view model.player]
-      , Ending.view model.ending
+      , [Ending.view model.ending]
       ]
   , instructions = Instructions.view model.instructions
   , debug = toString
