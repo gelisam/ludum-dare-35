@@ -35,7 +35,7 @@ init start_coord =
   -- , powerupIds = Set.empty
   , shape = I
   , orientation = R1
-  , powerupIds = Set.fromList <| List.map Powerup.id [Jump]
+  , powerupIds = Set.fromList <| List.map Powerup.id [Jump, Rotate, ShapeShift]
   }
 
 

@@ -12,6 +12,7 @@ type alias PositionedElement = (Coord, Element)
 type alias Model =
   { camera : Coord
   , elements : List PositionedElement
+  , instructions : Html
   , debug : String
   }
 
@@ -68,6 +69,13 @@ view model =
       , ("background-size", "28px 28px")
       , ("background-position", toString (-camera_pixels.x) ++ "px " ++ toString (-camera_pixels.y) ++ "px")
       ]
+    
+    instructions_style = Attributes.style
+      [ ("margin-top", "1em")
+      , ("margin-left", "auto")
+      , ("margin-right", "auto")
+      , ("width", "640px")
+      ]
   in
     Html.div [top_style]
       [ Html.img [title_style, Attributes.src "/imgs/title.png"] []
@@ -75,5 +83,6 @@ view model =
           [ Html.div [layer_style] [Html.div [bg_style] []]
           , Html.div [layer_style] [Html.fromElement everything]
           ]
-      , Html.div [layer_style] [Html.text model.debug]
+      , Html.div [instructions_style] [model.instructions]
+      , Html.div [instructions_style] [Html.text model.debug]
       ]

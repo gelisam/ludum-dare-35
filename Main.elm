@@ -5,6 +5,7 @@ import Html exposing (Html)
 import Time exposing (Time)
 
 import Ending
+import Instructions
 import Keys
 import Level
 import Player
@@ -19,6 +20,7 @@ import View
 type alias Model =
   { player : Player.Model
   , powerups : Powerups
+  , instructions : Instructions.Model
   , ending : Ending.Model
   }
 
@@ -27,6 +29,7 @@ init : Model
 init =
   { player = Player.init Level.player_start
   , powerups = Level.powerups_start
+  , instructions = Instructions.init
   , ending = Ending.init Level.goal_coord
   }
 
@@ -82,6 +85,7 @@ view model = View.view
       Powerups.view model.powerups ++
       [Player.view model.player] ++
       Ending.view model.ending
+  , instructions = Instructions.view model.instructions
   , debug = toString
       (round (model.ending.elapsed / 100 * Time.millisecond))
   }
