@@ -10,8 +10,16 @@
     <script type="text/javascript" src="elm.js"></script>
   </head>
   <body>
-    <audio id="audio" style="position: absolute; bottom: 1em; right: 1em;" controls loop>
+    <!-- visible, to allow the user to mute the music -->
+    <audio id="music" style="position: absolute; bottom: 1em; right: 1em;" controls loop>
       <source src="snds/tetroidvania.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+    
+    <!-- invisible, to preload the sound effects -->
+    <audio>
+      <source src="snds/fixed_shape.wav" type="audio/wav">
+      <source src="snds/upgrade.wav" type="audio/wav">
       Your browser does not support the audio element.
     </audio>
     <script type="text/javascript">
@@ -21,11 +29,14 @@
           lastSoundEvent = soundEvent;
           console.log("onSoundEvent", soundEvent);
           
-          var audio = document.getElementById("audio");
           if (soundEvent == "PlayMusic") {
-            audio.play();
+            document.getElementById("music").play();
           } else if (soundEvent == "StopMusic") {
-            audio.pause();
+            document.getElementById("music").pause();
+          } else if (soundEvent == "PlayFixedShapeSoundEffect") {
+            new Audio("snds/fixed_shape.wav").play();
+          } else if (soundEvent == "PlayUpgradeSoundEffect") {
+            new Audio("snds/upgrade.wav").play();
           }
         }
       }

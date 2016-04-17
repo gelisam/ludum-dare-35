@@ -53,8 +53,13 @@ init =
 
 update : Player.Action -> Model -> Model
 update action =
+  prepare_sound >>
   game_update action >>
   camera_update action
+
+prepare_sound : Model -> Model
+prepare_sound model =
+  { model | sound = Sound.update model.sound }
 
 game_update : Player.Action -> Model -> Model
 game_update action model = case model.blinking_player of
