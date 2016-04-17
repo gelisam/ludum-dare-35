@@ -143,11 +143,16 @@ keys_are_pressed keys model = case keys of
 
 pickup : Powerup -> Model -> Model
 pickup powerup model = case powerup of
-  FixedShape shape orientation ->
-    { model
-    | shape = shape
-    , orientation = orientation
-    }
+  FixedShape shape orientation coord ->
+    if shape == model.shape && orientation == model.orientation
+    then
+      model
+    else
+      { model
+      | coord = coord `Vec.minus` { x = 2, y = 1 }
+      , shape = shape
+      , orientation = orientation
+      }
   _ ->
     { model
     | powerupIds = Set.insert (Powerup.id powerup) model.powerupIds

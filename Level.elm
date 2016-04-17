@@ -43,8 +43,8 @@ char_grid = Grid.init
   , "#############    ########                                     ###        #"
   , "#############   #############                                 ###      * #"
   , "############    #################  * ##########   ###############        #"
-  , "############   #################### ###########   ## *                   #"
-  , "###########    #################### ###########   ###     #######        #"
+  , "############   #################### ###########   ###                    #"
+  , "###########    #################### ###########   ##*     #######        #"
   , "###########     ################### ###########   ### #    ###############"
   , "###########      ###          ##### ###########   ### #     ##############"
   , "############                           ########   ### # #    #############"
@@ -66,18 +66,18 @@ char_grid = Grid.init
 
 powerups : List Powerup
 powerups =
-  [ FixedShape T R1
-  , FixedShape T R0
+  [ FixedShape T R1 { x = 0, y = 0 }
+  , FixedShape T R0 { x = 0, y = -1 }
   , Rotate
-  , FixedShape I R1
-  , FixedShape I R1
-  , FixedShape I R0
-  , FixedShape Z R1
-  , FixedShape T R2
-  , FixedShape S R0
+  , FixedShape I R1 { x = 0, y = 0 }
+  , FixedShape I R1 { x = 0, y = -1 }
+  , FixedShape I R0 { x = 2, y = 0 }
+  , FixedShape Z R1 { x = 0, y = -1 }
+  , FixedShape T R0 { x = 0, y = -1 }
+  , FixedShape S R0 { x = -1, y = 0 }
   , Jump
-  , FixedShape O R0
-  , FixedShape L R0
+  , FixedShape O R0 { x = 0, y = 0 }
+  , FixedShape L R0 { x = 0, y = 0 }
   ]
 
 player_start : Coord

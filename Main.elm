@@ -36,14 +36,6 @@ init =
 
 -- UPDATE
 
-unlessCollision : (Player.Model -> Player.Model) -> Player.Model -> Player.Model
-unlessCollision f player =
-  let
-    player' = f player
-    collision = Level.collides player'.coord (Player.block_grid player')
-  in
-    if collision then player else player'
-
 update : Player.Action -> Model -> Model
 update action model =
   if model.ending.has_ended
@@ -91,7 +83,7 @@ check_powerups model =
 pickup_powerup : Powerup -> Model -> Model
 pickup_powerup powerup model =
   { model
-  | player = unlessCollision (Player.pickup powerup) model.player
+  | player = Player.pickup powerup model.player
   , instructions = Instructions.HowToUsePowerup powerup
   }
 
