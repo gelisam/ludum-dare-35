@@ -69,7 +69,9 @@ down_auto_repeat_delay = 50 * Time.millisecond
 keys_are_pressed : Keys.Action -> Model -> Model
 keys_are_pressed keys model = case keys of
   Keys.NoOp ->
-    model
+    { model
+    | last_keys = Keys.NoOp
+    }
   Keys.LeftKey ->
     if model.last_keys /= Keys.LeftKey || model.inactive_dt > normal_auto_repeat_delay
     then
@@ -113,15 +115,25 @@ keys_are_pressed keys model = case keys of
     else
       model
   Keys.RotationKey ->
-    if Powerup.id Rotate `Set.member` model.powerupIds
+    if
+      Powerup.id Rotate `Set.member` model.powerupIds &&
+      (model.last_keys /= Keys.RotationKey)
     then
-      { model | orientation = Shape.nextOrientation model.orientation }
+      { model
+      | orientation = Shape.nextOrientation model.orientation
+      , last_keys = Keys.RotationKey
+      }
     else
       model
   Keys.ShapeShiftKey ->
-    if Powerup.id ShapeShift `Set.member` model.powerupIds
+    if
+      Powerup.id ShapeShift `Set.member` model.powerupIds &&
+      (model.last_keys /= Keys.ShapeShiftKey)
     then
-      { model | shape = Shape.nextShape model.shape }
+      { model
+      | shape = Shape.nextShape model.shape
+      , last_keys = Keys.ShapeShiftKey
+      }
     else
       model
 
