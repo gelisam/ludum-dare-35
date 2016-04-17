@@ -49,5 +49,8 @@ pickup level_coord player_grid powerups =
   in
     List.foldr pickup1 ([], powerups) player_coords
 
+coords : Powerups -> List Coord
+coords = List.map fromKey << Dict.keys
+
 view : Powerups -> List PositionedElement
 view = Dict.toList >> List.map (\(key, powerup) -> (fromKey key, Powerup.view powerup))

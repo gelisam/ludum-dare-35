@@ -6,6 +6,7 @@ import Time exposing (Time)
 
 import Camera
 import Ending
+import FocusPoint exposing (FocusPoint)
 import Instructions
 import Keys
 import Level
@@ -27,9 +28,13 @@ type alias Model =
   }
 
 
+goal_focus_point : FocusPoint
+goal_focus_point =
+  Level.goal_coord `Vec.minus` { x = 2, y = 6}
+
 init : Model
 init =
-  { camera = Camera.init Level.player_start
+  { camera = Camera.init goal_focus_point
   , player = Player.init Level.player_start
   , powerups = Level.powerups_start
   , instructions = Instructions.init
@@ -108,9 +113,21 @@ check_ending model =
 
 camera_update : Player.Action -> Model -> Model
 camera_update action model =
-  { model
-  | camera = Camera.update { coord = model.player.coord, dt = action.dt } model.camera
-  }
+  let powerups =
+        Powerups.coords model.powerups
+      is_important_powerup coord = case Powerups.get coord model.powerups of
+        Nothing -> False
+        Just (FixedShape _ _ _) -> False
+        Just _ -> True
+      camera_action =
+        { coord = model.player.coord
+        , dt = action.dt
+        , focus_points =
+            [goal_focus_point] ++
+            List.filter is_important_powerup powerups
+        }
+  in
+    { model | camera = Camera.update camera_action model.camera }
 
 
 -- VIEW
