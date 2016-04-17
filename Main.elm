@@ -114,11 +114,22 @@ check_powerups model =
   let
     (pickedPowerups, remainingPowerups) =
       Powerups.pickup model.player.coord (Player.block_grid model.player) model.powerups
-    model' = List.foldr pickup_powerup model pickedPowerups
+    model' = List.foldr maybe_pickup_powerup model pickedPowerups
   in
     { model'
     | powerups = remainingPowerups
     }
+
+maybe_pickup_powerup : Powerup -> Model -> Model
+maybe_pickup_powerup powerup model = case powerup of
+  FixedShape shape orientation _ ->
+    if shape == model.player.shape && orientation == model.player.orientation
+    then
+      model
+    else
+      pickup_powerup powerup model
+  _ ->
+    pickup_powerup powerup model
 
 pickup_powerup : Powerup -> Model -> Model
 pickup_powerup powerup model =
