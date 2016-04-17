@@ -59,19 +59,38 @@ update action model =
       if collision
       then model
       else
-        let
-          (pickedPowerups, remainingPowerups) =
-            Powerups.pickup player'.coord (Player.block_grid player') model.powerups
-          ending_picked =
-            Ending.pickup player'.coord (Player.block_grid player') model.ending
-          ending_action =
-            if ending_picked then Ending.TheEnd else Ending.NoOp
-        in
-          { model
-          | player = List.foldr (unlessCollision << Player.pickup) player' pickedPowerups
-          , powerups = remainingPowerups
-          , ending = Ending.update (action.dt, ending_action) model.ending
-          }
+        { model | player = player' }
+          |> check_powerups
+          |> check_ending
+
+check_powerups : Model -> Model
+check_powerups model =
+  let
+    (pickedPowerups, remainingPowerups) =
+      Powerups.pickup model.player.coord (Player.block_grid model.player) model.powerups
+    model' = List.foldr pickup_powerup model pickedPowerups
+  in
+    { model'
+    | powerups = remainingPowerups
+    }
+
+pickup_powerup : Powerup -> Model -> Model
+pickup_powerup powerup model =
+  { model
+  | player = unlessCollision (Player.pickup powerup) model.player
+  , instructions = Instructions.HowToUsePowerup powerup
+  }
+
+check_ending : Model -> Model
+check_ending model =
+  if Ending.pickup model.player.coord (Player.block_grid model.player) model.ending
+  then
+    { model
+    | ending = Ending.update (0, Ending.TheEnd) model.ending
+    , instructions = Instructions.YouWin
+    }
+  else
+    model
 
 
 -- VIEW
