@@ -25,6 +25,12 @@ update model =
   | last_powerup = Nothing
   }
 
+playMusic : Model -> Model
+playMusic model =
+  { model
+  | music_is_playing = True
+  }
+
 pickup : Powerup -> Model -> Model
 pickup powerup model =
   { model

@@ -55,7 +55,8 @@ update : Player.Action -> Model -> Model
 update action =
   prepare_sound >>
   game_update action >>
-  camera_update action
+  camera_update action >>
+  music_update
 
 prepare_sound : Model -> Model
 prepare_sound model =
@@ -168,6 +169,17 @@ camera_update action model =
         }
   in
     { model | camera = Camera.update camera_action model.camera }
+
+music_update : Model -> Model
+music_update model =
+  if FocusPoint.isClose model.player.coord goal_focus_point
+  then
+    model
+  else
+    -- the player ventures into the unknown, cue the music!
+    { model
+    | sound = Sound.playMusic model.sound
+    }
 
 
 -- VIEW
