@@ -14,7 +14,7 @@ import Player
 import Powerup exposing (Powerup(..))
 import Powerups exposing (Powerups)
 import Vec exposing (Coord, Vec)
-import View
+import View exposing (PositionedElement)
 
 
 -- MODEL
@@ -22,6 +22,8 @@ import View
 type alias Model =
   { camera : Camera.Model
   , player : Player.Model
+  , blinking_duration : Time
+  , blinking_player : Maybe Player.Model
   , powerups : Powerups
   , instructions : Instructions.Model
   , ending : Ending.Model
@@ -36,6 +38,8 @@ init : Model
 init =
   { camera = Camera.init goal_focus_point
   , player = Player.init Level.player_start
+  , blinking_duration = 0
+  , blinking_player = Nothing
   , powerups = Level.powerups_start
   , instructions = Instructions.init
   , ending = Ending.init Level.goal_coord
@@ -50,24 +54,39 @@ update action =
   camera_update action
 
 game_update : Player.Action -> Model -> Model
-game_update action model =
-  if model.ending.has_ended
-  then
-    { model
-    | ending = Ending.update (action.dt, Ending.NoOp) model.ending
-    }
-  else
-    let
-      player' = Player.update action model.player
-      collision = Level.collides player'.coord (Player.block_grid player')
-    in
-      if collision
-      then model
-      else
-        { model | player = player' }
-          |> check_instructions action
-          |> check_powerups
-          |> check_ending
+game_update action model = case model.blinking_player of
+  Just _ ->
+    if model.blinking_duration > 100 * Time.millisecond
+    then
+      { model | blinking_player = Nothing }
+    else
+      { model | blinking_duration = model.blinking_duration + action.dt }
+  Nothing ->
+    if model.ending.has_ended
+    then
+      { model
+      | ending = Ending.update (action.dt, Ending.NoOp) model.ending
+      }
+    else
+      let
+        player' = Player.update action model.player
+        collision = Level.collides player'.coord (Player.block_grid player')
+      in
+        if collision
+        then
+          if action.keys == Keys.RotationKey || action.keys == Keys.ShapeShiftKey
+          then
+            { model
+            | blinking_duration = 0
+            , blinking_player = Just player'
+            }
+          else
+            model
+        else
+          { model | player = player' }
+            |> check_instructions action
+            |> check_powerups
+            |> check_ending
 
 check_instructions : Player.Action -> Model -> Model
 check_instructions action model = case (action.keys, model.instructions) of
@@ -140,13 +159,20 @@ view model = View.view
   , elements = List.concat
       [ [Level.view]
       , Powerups.view model.powerups
-      , [Player.view model.player]
+      , [viewPlayer model]
       , [Ending.view model.ending]
       ]
   , instructions = Instructions.view model.instructions
   , debug = toString
       (round (model.ending.elapsed / 100 * Time.millisecond))
   }
+
+viewPlayer : Model -> PositionedElement
+viewPlayer model = case model.blinking_player of
+  Just player ->
+    Player.view player
+  Nothing ->
+    Player.view model.player
 
 
 -- SIGNALS
