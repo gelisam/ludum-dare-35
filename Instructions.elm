@@ -32,7 +32,7 @@ view : Model -> Html
 view model = case model of
   Intro -> Html.text "Seems easy enough. Clear the lines!"
   CannotRotate -> Html.text "Hmm, it seems the rotation button is broken?"
-  HowToUsePowerup (FixedShape _ _) -> Html.text ""
+  HowToUsePowerup (FixedShape _ _ _) -> Html.text ""
   HowToUsePowerup Jump -> Html.text "An up arrow! Can I rotate now?"
   UnlikelyJump -> Html.text "Moving upwards? I that even a legal move?"
   HowToUsePowerup Rotate -> Html.text "Press Z!"
