@@ -22,6 +22,7 @@ type alias Model =
   , shape : Shape
   , orientation : Orientation
   , powerupIds : Set PowerupId
+  , gracePeriod : Time
   }
 
 
@@ -34,6 +35,7 @@ init start_coord =
   , shape = I
   , orientation = R0
   , powerupIds = Set.empty
+  , gracePeriod = 0
   -- , powerupIds = Set.fromList <| List.map Powerup.id [Jump, Rotate, ShapeShift]
   }
 
@@ -58,6 +60,7 @@ time_passes : Time -> Model -> Model
 time_passes dt model =
   { model
   | inactive_dt = model.inactive_dt + dt
+  , gracePeriod = model.gracePeriod - dt
   }
 
 normal_auto_repeat_delay : Time
@@ -73,6 +76,7 @@ keys_are_pressed : Keys.Action -> Model -> Model
 keys_are_pressed keys model = case keys of
   Keys.NoOp ->
     if model.inactive_dt > toFloat model.down_delay * Time.millisecond
+        && model.gracePeriod <= 0
     then
       let
         model' = keys_are_pressed Keys.DownKey model
@@ -113,6 +117,7 @@ keys_are_pressed keys model = case keys of
       | coord = model.coord `Vec.plus` { x = 0, y = -1 }
       , last_keys = Keys.UpKey
       , inactive_dt = 0
+      , gracePeriod = 500 * Time.millisecond
       }
     else
       model
