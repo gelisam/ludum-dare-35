@@ -90,7 +90,14 @@ game_update action model = case model.blinking_player of
             , blinking_player = Just player'
             }
           else
-            model
+            { model
+            | player = { player'
+                       | coord = model.player.coord
+                       , shape = model.player.shape
+                       , orientation = model.player.orientation
+                       , powerupIds = model.player.powerupIds
+                       }
+            }
         else
           { model | player = player' }
             |> check_instructions action
