@@ -224,9 +224,8 @@ input =
   in
     Signal.sampleOn delta (Signal.map2 (\dt keys -> { dt = min dt 30, keys = keys }) delta Keys.signal)
 
-port soundEvent : Signal String
+port soundEvent : Signal (Maybe String)
 port soundEvent =
   state
     |> Signal.map .sound
     |> Sound.signal
-    |> Signal.map toString

@@ -5,15 +5,21 @@ import Powerup exposing (Powerup(..))
 
 -- MODEL
 
+type Event
+  = PlayMusic
+  | StopMusic
+  | PlayFixedShapeSoundEffect
+  | PlayUpgradeSoundEffect
+
 type alias Model =
   { music_is_playing : Bool
-  , last_powerup : Maybe Powerup
+  , event : Maybe Event
   }
 
 init : Model
 init =
   { music_is_playing = False
-  , last_powerup = Nothing
+  , event = Nothing
   }
 
 
@@ -21,42 +27,27 @@ init =
 
 update : Model -> Model
 update model =
-  { model
-  | last_powerup = Nothing
-  }
+  { model | event = Nothing }
 
 playMusic : Model -> Model
-playMusic model =
-  { model
-  | music_is_playing = True
-  }
+playMusic model = case model.music_is_playing of
+  False ->
+    { model
+    | music_is_playing = True
+    , event = Just PlayMusic
+    }
+  True ->
+    model
 
 pickup : Powerup -> Model -> Model
-pickup powerup model =
-  { model
-  | last_powerup = Just powerup
-  }
+pickup powerup model = case powerup of
+  FixedShape _ _ _ ->
+    { model | event = Just PlayFixedShapeSoundEffect }
+  _ ->
+    { model | event = Just PlayUpgradeSoundEffect }
 
 
 -- VIEW
 
-type Event
-  = NoOp
-  | PlayMusic
-  | StopMusic
-  | PlayFixedShapeSoundEffect
-  | PlayUpgradeSoundEffect
-
-event : Model -> Event
-event model = case (model.last_powerup, model.music_is_playing) of
-  (Just (FixedShape _ _ _), _) ->
-    PlayFixedShapeSoundEffect
-  (Just _, _) ->
-    PlayUpgradeSoundEffect
-  (Nothing, True) ->
-    PlayMusic
-  (Nothing, False) ->
-    StopMusic
-
-signal : Signal Model -> Signal Event
-signal = Signal.map event
+signal : Signal Model -> Signal (Maybe String)
+signal = Signal.map (Maybe.map toString << .event)

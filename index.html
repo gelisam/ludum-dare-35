@@ -23,10 +23,8 @@
       Your browser does not support the audio element.
     </audio>
     <script type="text/javascript">
-      var lastSoundEvent = null;
       function onSoundEvent(soundEvent) {
-        if (soundEvent != lastSoundEvent) {
-          lastSoundEvent = soundEvent;
+        if (soundEvent != null) {
           //console.log("onSoundEvent", soundEvent);
           
           if (soundEvent == "PlayMusic") {
