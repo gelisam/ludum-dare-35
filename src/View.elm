@@ -16,12 +16,11 @@ import Html.Attributes exposing (class)
 --  }
 
 type alias Model msg =
+  { counter : Html msg
   --{ camera : Pixels
   --, elements : List PositionedElement
-  --, instructions : Html
-  --, debug : String
-  { counter : Html msg
   , instructions : Html msg
+  --, debug : String
   }
 
 view : Model msg -> Html msg
