@@ -52,14 +52,14 @@ remove coord = Dict.update (toKey coord) <| \v -> case v of
 pickup : Coord -> Grid (Maybe Block) -> Powerups -> (List Powerup, Powerups)
 pickup level_coord player_grid powerups =
   let
-    player_coords : List Coord
-    player_coords = Grid.keys player_grid
-    
-    pickup1 : Coord -> (List Powerup, Powerups) -> (List Powerup, Powerups)
-    pickup1 player_coord (picked, remaining) =
-      let
-        coord = level_coord |> Vec.plus player_coord
-      in
+      player_coords : List Coord
+      player_coords = Grid.keys player_grid
+
+      pickup1 : Coord -> (List Powerup, Powerups) -> (List Powerup, Powerups)
+      pickup1 player_coord (picked, remaining) =
+        let
+            coord = level_coord |> Vec.plus player_coord
+        in
         case (Grid.get player_coord player_grid, get coord remaining) of
           (Just (Just _), Just (FixedShape shape orientation dp)) ->
             (FixedShape shape orientation (coord |> Vec.plus dp) :: picked, remaining)
@@ -68,7 +68,7 @@ pickup level_coord player_grid powerups =
           _ ->
             (picked, remaining)
   in
-    List.foldr pickup1 ([], powerups) player_coords
+  List.foldr pickup1 ([], powerups) player_coords
 
 coords : Powerups -> List Coord
 coords = List.map fromKey << Dict.keys

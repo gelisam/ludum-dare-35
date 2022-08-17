@@ -46,17 +46,17 @@ update (dt, action) model = case (action, model.has_ended) of
 pickup : Coord -> Grid (Maybe Block) -> Model -> Bool
 pickup level_coord player_grid model =
   let
-    player_coords : List Coord
-    player_coords = Grid.keys player_grid
-    
-    pickup1 : Coord -> Bool
-    pickup1 player_coord =
-      let
-        coord = level_coord |> Vec.plus player_coord
-      in
+      player_coords : List Coord
+      player_coords = Grid.keys player_grid
+
+      pickup1 : Coord -> Bool
+      pickup1 player_coord =
+        let
+            coord = level_coord |> Vec.plus player_coord
+        in
         coord == model.coord
   in
-    List.any pickup1 player_coords
+  List.any pickup1 player_coords
 
 
 -- VIEW

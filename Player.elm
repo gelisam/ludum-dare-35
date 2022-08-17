@@ -40,7 +40,7 @@ init start_coord =
   }
 
 hasPowerup : Powerup -> Model -> Bool
-hasPowerup powerup model = 
+hasPowerup powerup model =
   Powerup.id powerup |> Set.member model.powerupIds
 
 
@@ -79,11 +79,11 @@ keys_are_pressed keys model = case keys of
         && model.gracePeriod <= 0
     then
       let
-        model' = keys_are_pressed Keys.DownKey model
+          model' = keys_are_pressed Keys.DownKey model
       in
-        { model'
-        | down_delay = max 200 (model'.down_delay - 10)
-        }
+      { model'
+      | down_delay = max 200 (model'.down_delay - 10)
+      }
     else
       { model
       | last_keys = Keys.NoOp

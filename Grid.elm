@@ -14,10 +14,10 @@ type alias Grid a = Array (Array a)
 init : List String -> Grid Char
 init strings =
   let
-    row : String -> Array Char
-    row = Array.fromList << String.toList
+      row : String -> Array Char
+      row = Array.fromList << String.toList
   in
-    Array.fromList (List.map row strings)
+  Array.fromList (List.map row strings)
 
 
 width : Grid a -> Int
@@ -38,12 +38,12 @@ map = Array.map << Array.map
 keys : Grid a -> List Coord
 keys grid =
   let
-    xs = [0 .. width grid-1]
-    ys = [0 .. height grid-1]
-    key y x = { y = y, x = x }
-    row_keys y = List.map (key y) xs
+      xs = [0 .. width grid-1]
+      ys = [0 .. height grid-1]
+      key y x = { y = y, x = x }
+      row_keys y = List.map (key y) xs
   in
-    List.concatMap row_keys ys
+  List.concatMap row_keys ys
 
 
 view : Grid Element -> Element

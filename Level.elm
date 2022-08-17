@@ -88,41 +88,41 @@ powerups =
 player_start : Coord
 player_start =
   let
-    is_start_coord : Coord -> Bool
-    is_start_coord coord = Grid.get coord char_grid == Just '.'
-    
-    coords = Grid.keys char_grid
-    start_coords = List.filter is_start_coord coords
+      is_start_coord : Coord -> Bool
+      is_start_coord coord = Grid.get coord char_grid == Just '.'
+
+      coords = Grid.keys char_grid
+      start_coords = List.filter is_start_coord coords
   in
-    case start_coords of
-      [coord] -> coord
-      [] -> Debug.crash "level has no start position"
-      _ -> Debug.crash "level has more than one start position"
+  case start_coords of
+    [coord] -> coord
+    [] -> Debug.crash "level has no start position"
+    _ -> Debug.crash "level has more than one start position"
 
 goal_coord : Coord
 goal_coord =
   let
-    is_goal_coord : Coord -> Bool
-    is_goal_coord coord = Grid.get coord char_grid == Just '!'
-    
-    coords = Grid.keys char_grid
-    goal_coords = List.filter is_goal_coord coords
+      is_goal_coord : Coord -> Bool
+      is_goal_coord coord = Grid.get coord char_grid == Just '!'
+
+      coords = Grid.keys char_grid
+      goal_coords = List.filter is_goal_coord coords
   in
-    case goal_coords of
-      [coord] -> coord
-      [] -> Debug.crash "level has no goal position"
-      _ -> Debug.crash "level has more than one goal position"
+  case goal_coords of
+    [coord] -> coord
+    [] -> Debug.crash "level has no goal position"
+    _ -> Debug.crash "level has more than one goal position"
 
 powerups_start : Powerups
 powerups_start =
   let
-    is_powerup_coord : Coord -> Bool
-    is_powerup_coord coord = Grid.get coord char_grid == Just '*'
-    
-    coords = Grid.keys char_grid
-    powerup_coords = List.filter is_powerup_coord coords
+      is_powerup_coord : Coord -> Bool
+      is_powerup_coord coord = Grid.get coord char_grid == Just '*'
+
+      coords = Grid.keys char_grid
+      powerup_coords = List.filter is_powerup_coord coords
   in
-    Powerups.fromList <| List.map2 (,) powerup_coords powerups
+  Powerups.fromList <| List.map2 (,) powerup_coords powerups
 
 block_grid : Grid Block
 block_grid =
@@ -135,29 +135,29 @@ obstacle block = block /= White
 collides : Coord -> Grid (Maybe Block) -> Bool
 collides level_coord player_grid =
   let
-    collidesWith : Maybe Block -> Maybe Block -> Bool
-    collidesWith player_block level_block = case (player_block, level_block) of
-      (Nothing, _) ->
-        -- outside the player, no collision
-        False
-      (_, Nothing) ->
-        -- outside the level, grey everywhere
-        obstacle Grey
-      (_, Just block) ->
-        obstacle block
-    
-    collidesAt : Coord -> Bool
-    collidesAt player_coord =
-      let
-        player_block = Maybe.withDefault Nothing (Grid.get player_coord player_grid)
-        level_block = Grid.get (player_coord |> Vec.plus level_coord) block_grid
-      in
+      collidesWith : Maybe Block -> Maybe Block -> Bool
+      collidesWith player_block level_block = case (player_block, level_block) of
+        (Nothing, _) ->
+          -- outside the player, no collision
+          False
+        (_, Nothing) ->
+          -- outside the level, grey everywhere
+          obstacle Grey
+        (_, Just block) ->
+          obstacle block
+
+      collidesAt : Coord -> Bool
+      collidesAt player_coord =
+        let
+            player_block = Maybe.withDefault Nothing (Grid.get player_coord player_grid)
+            level_block = Grid.get (player_coord |> Vec.plus level_coord) block_grid
+        in
         collidesWith player_block level_block
 
-    player_coords : List Coord
-    player_coords = Grid.keys player_grid
+      player_coords : List Coord
+      player_coords = Grid.keys player_grid
   in
-    List.any collidesAt player_coords
+  List.any collidesAt player_coords
 
 
 -- VIEW

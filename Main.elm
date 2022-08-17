@@ -78,31 +78,31 @@ game_update action model = case model.blinking_player of
       }
     else
       let
-        player' = Player.update action model.player
-        collision = Level.collides player'.coord (Player.block_grid player')
+          player' = Player.update action model.player
+          collision = Level.collides player'.coord (Player.block_grid player')
       in
-        if collision
+      if collision
+      then
+        if action.keys == Keys.RotationKey || action.keys == Keys.ShapeShiftKey
         then
-          if action.keys == Keys.RotationKey || action.keys == Keys.ShapeShiftKey
-          then
-            { model
-            | blinking_duration = 0
-            , blinking_player = Just player'
-            }
-          else
-            { model
-            | player = { player'
-                       | coord = model.player.coord
-                       , shape = model.player.shape
-                       , orientation = model.player.orientation
-                       , powerupIds = model.player.powerupIds
-                       }
-            }
+          { model
+          | blinking_duration = 0
+          , blinking_player = Just player'
+          }
         else
-          { model | player = player' }
-            |> check_instructions action
-            |> check_powerups
-            |> check_ending
+          { model
+          | player = { player'
+                     | coord = model.player.coord
+                     , shape = model.player.shape
+                     , orientation = model.player.orientation
+                     , powerupIds = model.player.powerupIds
+                     }
+          }
+      else
+        { model | player = player' }
+          |> check_instructions action
+          |> check_powerups
+          |> check_ending
 
 check_instructions : Player.Action -> Model -> Model
 check_instructions action model = case (action.keys, model.instructions) of
@@ -120,13 +120,13 @@ check_instructions action model = case (action.keys, model.instructions) of
 check_powerups : Model -> Model
 check_powerups model =
   let
-    (pickedPowerups, remainingPowerups) =
-      Powerups.pickup model.player.coord (Player.block_grid model.player) model.powerups
-    model' = List.foldr maybe_pickup_powerup model pickedPowerups
+      (pickedPowerups, remainingPowerups) =
+        Powerups.pickup model.player.coord (Player.block_grid model.player) model.powerups
+      model' = List.foldr maybe_pickup_powerup model pickedPowerups
   in
-    { model'
-    | powerups = remainingPowerups
-    }
+  { model'
+  | powerups = remainingPowerups
+  }
 
 maybe_pickup_powerup : Powerup -> Model -> Model
 maybe_pickup_powerup powerup model = case powerup of
@@ -160,7 +160,8 @@ check_ending model =
 
 camera_update : Player.Action -> Model -> Model
 camera_update action model =
-  let powerups =
+  let
+      powerups =
         Powerups.coords model.powerups
       is_important_powerup coord = case Powerups.get coord model.powerups of
         Nothing -> False
@@ -175,7 +176,7 @@ camera_update action model =
             ]
         }
   in
-    { model | camera = Camera.update camera_action model.camera }
+  { model | camera = Camera.update camera_action model.camera }
 
 music_update : Model -> Model
 music_update model =
@@ -227,9 +228,9 @@ main =
 input : Signal Player.Action
 input =
   let
-    delta = AnimationFrame.frame
+      delta = AnimationFrame.frame
   in
-    Signal.sampleOn delta (Signal.map2 (\dt keys -> { dt = min dt 30, keys = keys }) delta Keys.signal)
+  Signal.sampleOn delta (Signal.map2 (\dt keys -> { dt = min dt 30, keys = keys }) delta Keys.signal)
 
 port soundEvent : Signal (Maybe String)
 port soundEvent =
