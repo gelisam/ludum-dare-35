@@ -1,11 +1,13 @@
 module Main exposing (main)
 
+import Array
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 
 import Block
 import Counter
+import Grid
 import Instructions
 import Vec
 import View
@@ -43,14 +45,18 @@ view model =
     , counter =
         Counter.view model.counter
     , images =
-        [ { coord =
-              Vec.init
-          , src =
-              Block.viewOpaque Block.Orange
-          , visible =
-              True
-          }
-        ]
+        Array.fromList
+          [ Array.fromList
+              [ Just Block.Orange
+              , Just Block.Yellow
+              ]
+          , Array.fromList
+              [ Nothing
+              , Just Block.Yellow
+              ]
+          ]
+          |> Grid.map Block.viewTransparent
+          |> Grid.view
     , instructions =
         Instructions.view model.instructions
     }

@@ -1,11 +1,11 @@
-module Grid where
+module Grid exposing (..)
 
 import Array exposing (Array)
-import Graphics.Element as Element exposing (..)
 import String
 
 import Block exposing (Block(..))
-import Vec exposing (Coord)
+import Vec exposing (Coord, Pixels)
+import View exposing (PositionedImage)
 
 
 type alias Grid a = Array (Array a)
@@ -35,17 +35,34 @@ get coord grid =
 map : (a -> b) -> Grid a -> Grid b
 map = Array.map << Array.map
 
+indexedMap : (Coord -> a -> b) -> Grid a -> Grid b
+indexedMap f =
+  Array.indexedMap (\y ->
+    Array.indexedMap (\x ->
+      f { x = x, y = y}))
+
 keys : Grid a -> List Coord
 keys grid =
   let
-      xs = [0 .. width grid-1]
-      ys = [0 .. height grid-1]
+      xs = List.range 0 (width grid-1)
+      ys = List.range 0 (height grid-1)
       key y x = { y = y, x = x }
       row_keys y = List.map (key y) xs
   in
   List.concatMap row_keys ys
 
 
-view : Grid Element -> Element
-view =
-  flow down << Array.toList << Array.map (flow right << Array.toList)
+view : Grid (Maybe String) -> List PositionedImage
+view grid =
+  grid
+    |> indexedMap (\coord ->
+         Maybe.map (\string ->
+           { coord =
+               coord
+           , src =
+               string
+           , visible =
+               True
+           }))
+    |> Array.toList
+    |> List.concatMap (Array.toList >> List.filterMap identity)
