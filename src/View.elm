@@ -17,7 +17,7 @@ type alias PositionedImage =
 type alias Model msg =
   { camera : Pixels
   , counter : Html msg
-  --, images : List PositionedImage
+  , images : List PositionedImage
   , instructions : Html msg
   --, debug : String
   }
@@ -58,21 +58,8 @@ view model =
               []
           ]
 
-      examplePositionedImage : PositionedImage
-      examplePositionedImage =
-        { coord =
-            { x = 0
-            , y = 0
-            }
-        , src =
-            "imgs/white.png"
-        , visible =
-            True
-        }
-
       everything : List (Html msg)
-      everything = [viewPositionedImage examplePositionedImage]
-      --everything = List.map viewPositionedImage model.elements
+      everything = List.map viewPositionedImage model.images
 
       background : Html msg
       background =

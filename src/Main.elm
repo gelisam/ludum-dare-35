@@ -4,8 +4,10 @@ import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 
+import Block
 import Counter
 import Instructions
+import Vec
 import View
 
 type alias Flags = {}
@@ -40,6 +42,15 @@ view model =
         }
     , counter =
         Counter.view model.counter
+    , images =
+        [ { coord =
+              Vec.init
+          , src =
+              Block.viewOpaque Block.Orange
+          , visible =
+              True
+          }
+        ]
     , instructions =
         Instructions.view model.instructions
     }
