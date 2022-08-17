@@ -1,7 +1,7 @@
 module View exposing (..)
 
 import Html exposing (Html)
-import Html.Attributes as Attributes
+import Html.Attributes exposing (class)
 --import Graphics.Element exposing (..)
 
 --import Vec exposing (..)
@@ -53,40 +53,6 @@ view model =
   --  everything : List Html
   --  everything = List.map viewPositionedElement model.elements
   --
-  --  top_style = Attributes.style
-  --    [ ("image-rendering", "pixelated")
-  --    ]
-  --
-  --  title_style = Attributes.style
-  --    [ ("margin-top", "2em")
-  --    , ("margin-left", "auto")
-  --    , ("margin-right", "auto")
-  --    , ("display", "block")
-  --    , ("width", "363px")
-  --    , ("height", "45px")
-  --    ]
-  --
-  --  container_style = Attributes.style
-  --    [ ("margin-top", "1em")
-  --    , ("margin-left", "auto")
-  --    , ("margin-right", "auto")
-  --    , ("width", "640px")
-  --    , ("height", "480px")
-  --    , ("border", "4px solid black")
-  --    ]
-  --
-  --  visible_layer_style = Attributes.style
-  --    [ ("width", "0px")
-  --    , ("height", "0px")
-  --    , ("overflow", "visible")
-  --    ]
-  --
-  --  invisible_layer_style = Attributes.style
-  --    [ ("width", "0px")
-  --    , ("height", "0px")
-  --    , ("overflow", "hidden")
-  --    ]
-  --
   --  bg_style = Attributes.style
   --    [ ("width", "640px")
   --    , ("height", "480px")
@@ -94,22 +60,14 @@ view model =
   --    , ("background-size", "28px 28px")
   --    , ("background-position", toString (-camera_pixels.x) ++ "px " ++ toString (-camera_pixels.y) ++ "px")
   --    ]
-  --
-  --  instructions_style = Attributes.style
-  --    [ ("margin-top", "1em")
-  --    , ("margin-left", "auto")
-  --    , ("margin-right", "auto")
-  --    , ("width", "640px")
-  --    ]
   --in
-  --  Html.div [top_style]
-  --    [ Html.img [title_style, Attributes.src "imgs/title.png"] []
-  --    , Html.div [container_style]
-  --        (Html.div [visible_layer_style] [Html.div [bg_style] []] :: everything)
-  --    , Html.div [instructions_style] [model.instructions]
-  --    , Html.div [instructions_style] [Html.text model.debug]
-  --    ]
-  Html.div []
-    [ model.counter
-    , model.instructions
+  Html.div [class "top"]
+    [ Html.div [class "container"] [model.counter]
+    , Html.div [class "instructions"] [model.instructions]
     ]
+  --  [ Html.img [title_style, Attributes.src "imgs/title.png"] []
+  --  , Html.div [container_style]
+  --      (Html.div [visible_layer_style] [Html.div [bg_style] []] :: everything)
+  --  , Html.div [instructions_style] [model.instructions]
+  --  , Html.div [instructions_style] [Html.text model.debug]
+  --  ]
