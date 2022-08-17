@@ -1,10 +1,10 @@
 module View exposing (..)
 
 import Html exposing (Html)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, src, style)
 --import Graphics.Element exposing (..)
 
---import Vec exposing (..)
+import Vec exposing (..)
 
 
 --type alias PositionedElement =
@@ -16,8 +16,8 @@ import Html.Attributes exposing (class)
 --  }
 
 type alias Model msg =
-  { counter : Html msg
-  --{ camera : Pixels
+  { camera : Pixels
+  , counter : Html msg
   --, elements : List PositionedElement
   , instructions : Html msg
   --, debug : String
@@ -25,9 +25,9 @@ type alias Model msg =
 
 view : Model msg -> Html msg
 view model =
-  --let
-  --  camera_pixels = model.camera
-  --
+  let
+      camera_pixels = model.camera
+
   --  positionElement : PositionedElement -> Element
   --  positionElement positionedElement =
   --    let
@@ -49,24 +49,28 @@ view model =
   --      |> Html.fromElement
   --      |> viewLayer positionedElement.visible
   --
-  --  everything : List Html
-  --  everything = List.map viewPositionedElement model.elements
-  --
-  --  bg_style = Attributes.style
-  --    [ ("width", "640px")
-  --    , ("height", "480px")
-  --    , ("background-image", "url('imgs/grey.png')")
-  --    , ("background-size", "28px 28px")
-  --    , ("background-position", toString (-camera_pixels.x) ++ "px " ++ toString (-camera_pixels.y) ++ "px")
-  --    ]
-  --in
+      everything : List (Html msg)
+      everything = [model.counter]
+      --everything = List.map viewPositionedElement model.elements
+
+      background : Html msg
+      background =
+        Html.div [class "visible_layer"]
+          [ Html.div
+              [ class "background"
+              , style
+                  "background-position"
+                  ( String.fromInt (-camera_pixels.x) ++ "px "
+                 ++ String.fromInt (-camera_pixels.y) ++ "px"
+                  )
+              ]
+              []
+          ]
+  in
   Html.div [class "top"]
-    [ Html.div [class "container"] [model.counter]
+    [ Html.img [class "title", src "imgs/title.png"] []
+    , Html.div [class "container"]
+        (background :: everything)
     , Html.div [class "instructions"] [model.instructions]
+    --, Html.div [instructions_style] [Html.text model.debug]
     ]
-  --  [ Html.img [title_style, Attributes.src "imgs/title.png"] []
-  --  , Html.div [container_style]
-  --      (Html.div [visible_layer_style] [Html.div [bg_style] []] :: everything)
-  --  , Html.div [instructions_style] [model.instructions]
-  --  , Html.div [instructions_style] [Html.text model.debug]
-  --  ]

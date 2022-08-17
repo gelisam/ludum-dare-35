@@ -34,7 +34,11 @@ init _ =
 view : Model -> Html Msg
 view model =
   View.view
-    { counter =
+    { camera =
+        { x = 10 * model.counter
+        , y = 0
+        }
+    , counter =
         Counter.view model.counter
     , instructions =
         Instructions.view model.instructions

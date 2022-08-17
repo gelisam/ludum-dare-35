@@ -1,4 +1,4 @@
-module Vec where
+module Vec exposing (..)
 
 
 type alias Vec a =
