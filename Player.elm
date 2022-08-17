@@ -9,7 +9,7 @@ import Keys
 import Powerup exposing (Powerup(..), PowerupId)
 import Shape exposing (Shape(..), Orientation(..))
 import Vec exposing (Coord, Vec)
-import View exposing (PositionedElement)
+import View exposing (PositionedImage)
 
 
 -- MODEL
@@ -177,7 +177,7 @@ pickup powerup model = case powerup of
 block_grid : Model -> Grid (Maybe Block)
 block_grid model = Shape.block_grid model.shape model.orientation
 
-view : Model -> PositionedElement
+view : Model -> PositionedImage
 view model =
   { coord = model.coord
   , element = Shape.view model.shape model.orientation

@@ -1,10 +1,8 @@
 module Powerup where
 
-import Graphics.Element as Element exposing (Element)
-
 import Shape exposing (Shape(..), Orientation(..))
 import Vec exposing (Coord, Vec)
-import View exposing (PositionedElement)
+import View exposing (PositionedImage)
 
 
 type Powerup
@@ -24,17 +22,17 @@ id powerup = case powerup of
   ShapeShift -> 3
 
 
-view : Coord -> Powerup -> Bool -> PositionedElement
+view : Coord -> Powerup -> Bool -> PositionedImage
 view coord powerup visible =
   { coord = coord
-  , element = case powerup of
+  , src = case powerup of
       FixedShape shape orientation _ ->
-        Element.image 28 28 ("imgs/" ++ toString shape ++ "_" ++ toString orientation ++ ".png")
+        "imgs/" ++ toString shape ++ "_" ++ toString orientation ++ ".png"
       Jump ->
-        Element.image 28 28 "imgs/jump.png"
+        "imgs/jump.png"
       Rotate ->
-        Element.image 28 28 "imgs/rotate.png"
+        "imgs/rotate.png"
       ShapeShift ->
-        Element.image 28 28 "imgs/shapeshift.png"
+        "imgs/shapeshift.png"
   , visible = visible
   }

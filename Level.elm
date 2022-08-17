@@ -1,14 +1,12 @@
 module Level where
 
-import Graphics.Element exposing (..)
-
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Powerup exposing (Powerup(..))
 import Powerups exposing (Powerups)
 import Shape exposing (Shape(..), Orientation(..))
 import Vec exposing (Coord)
-import View exposing (PositionedElement)
+import View exposing (PositionedImage)
 
 
 -- ' ' for floor
@@ -170,7 +168,7 @@ element : Element
 element =
   Grid.view element_grid
 
-view : PositionedElement
+view : PositionedImage
 view =
   { coord = Vec.init
   , element = element

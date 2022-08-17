@@ -15,7 +15,7 @@ import Powerup exposing (Powerup(..))
 import Powerups exposing (Powerups)
 import Sound
 import Vec exposing (Coord, Vec)
-import View exposing (PositionedElement)
+import View exposing (PositionedImage)
 
 
 -- MODEL
@@ -206,7 +206,7 @@ view model = View.view
   , debug = ""
   }
 
-viewPlayer : Model -> PositionedElement
+viewPlayer : Model -> PositionedImage
 viewPlayer model = case model.blinking_player of
   Just player ->
     Player.view player

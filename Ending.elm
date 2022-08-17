@@ -1,12 +1,11 @@
 module Ending where
 
-import Graphics.Element exposing (..)
 import Time exposing (Time)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
 import Vec exposing (Coord, Vec)
-import View exposing (PositionedElement)
+import View exposing (PositionedImage)
 
 
 -- MODEL
@@ -122,7 +121,7 @@ element_grid2 =
     Grid.map Block.viewOpaque block_grid2
 
 
-view : Model -> PositionedElement
+view : Model -> PositionedImage
 view model =
   { coord =
       model.coord |> Vec.minus { x = Grid.width char_grid0 - 1

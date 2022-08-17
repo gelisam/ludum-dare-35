@@ -1,26 +1,23 @@
 module View exposing (..)
 
-import Html exposing (Html)
+import Html exposing (Attribute, Html)
 import Html.Attributes exposing (class, src, style)
-import Collage exposing (Collage, image)
-import Collage.Layout exposing (at, spacer, bottomRight)
-import Collage.Render
 
 import Vec exposing (..)
 
 
-type alias PositionedElement msg =
+type alias PositionedImage =
   { coord : Coord
-  , element : Collage msg
+  , src : String
   , visible : Bool -- due to react-style rendering optimizations,
-                   -- it's faster to display invisible elements
+                   -- it's faster to display invisible images
                    -- than to remove them from the display list
   }
 
 type alias Model msg =
   { camera : Pixels
   , counter : Html msg
-  --, elements : List PositionedElement
+  --, images : List PositionedImage
   , instructions : Html msg
   --, debug : String
   }
@@ -30,51 +27,59 @@ view model =
   let
       camera_pixels = model.camera
 
-      positionElement : PositionedElement msg -> Collage msg
-      positionElement positionedElement =
+      relativePosition : Pixels -> List (Attribute msg)
+      relativePosition pos =
+        [ style "position" "relative"
+        , style "left" (String.fromInt pos.x ++ "px")
+        , style "top" (String.fromInt pos.y ++ "px")
+        ]
+
+      backgroundPosition : Pixels -> Attribute msg
+      backgroundPosition pos =
+        style
+          "background-position"
+          ( String.fromInt pos.x ++ "px "
+         ++ String.fromInt pos.y ++ "px"
+          )
+
+      viewPositionedImage : PositionedImage -> Html msg
+      viewPositionedImage positionedImage =
         let
-            relative_pixels = pixels positionedElement.coord |> minus camera_pixels
+            relative_pixels = pixels positionedImage.coord |> minus camera_pixels
+            visibility_class = if positionedImage.visible then "visible" else "invisible"
         in
-        spacer (toFloat relative_pixels.x) (toFloat relative_pixels.y)
-          |> at bottomRight positionedElement.element
+        Html.div
+          [class visibility_class]
+          [ Html.img
+              ( class "image"
+             :: src positionedImage.src
+             :: relativePosition relative_pixels
+              )
+              []
+          ]
 
-      viewLayer : Bool -> Html msg -> Html msg
-      viewLayer visible html =
-        Html.div [if visible then class "visible_layer" else class "invisible_layer"] [html]
-
-      viewPositionedElement : PositionedElement msg -> Html msg
-      viewPositionedElement positionedElement =
-        positionedElement
-          |> positionElement
-          |> Collage.Render.svg
-          |> viewLayer positionedElement.visible
-
-      examplePositionedElement : PositionedElement msg
-      examplePositionedElement =
+      examplePositionedImage : PositionedImage
+      examplePositionedImage =
         { coord =
             { x = 0
             , y = 0
             }
-        , element =
-            image (28, 28) "imgs/white.png"
+        , src =
+            "imgs/white.png"
         , visible =
             True
         }
 
       everything : List (Html msg)
-      everything = [model.counter, viewPositionedElement examplePositionedElement]
-      --everything = List.map viewPositionedElement model.elements
+      everything = [model.counter, viewPositionedImage examplePositionedImage]
+      --everything = List.map viewPositionedImage model.elements
 
       background : Html msg
       background =
-        Html.div [class "visible_layer"]
+        Html.div [class "visible"]
           [ Html.div
               [ class "background"
-              , style
-                  "background-position"
-                  ( String.fromInt (-camera_pixels.x) ++ "px "
-                 ++ String.fromInt (-camera_pixels.y) ++ "px"
-                  )
+              , backgroundPosition (Vec.init |> minus camera_pixels)
               ]
               []
           ]

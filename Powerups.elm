@@ -1,13 +1,12 @@
 module Powerups where
 
 import Dict exposing (Dict)
-import Graphics.Element as Element exposing (Element)
 
 import Block exposing (Block)
 import Grid exposing (Grid)
 import Powerup exposing (Powerup(..))
 import Vec exposing (Coord, Vec)
-import View exposing (PositionedElement)
+import View exposing (PositionedImage)
 
 
 type alias Entry =
@@ -73,9 +72,9 @@ pickup level_coord player_grid powerups =
 coords : Powerups -> List Coord
 coords = List.map fromKey << Dict.keys
 
-viewEntry : Coord -> Entry -> PositionedElement
+viewEntry : Coord -> Entry -> PositionedImage
 viewEntry coord entry =
   Powerup.view coord entry.powerup entry.visible
 
-view : Powerups -> List PositionedElement
+view : Powerups -> List PositionedImage
 view = Dict.toList >> List.map (\(key, entry) -> viewEntry (fromKey key) entry)
