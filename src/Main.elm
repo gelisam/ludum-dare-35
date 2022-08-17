@@ -1,16 +1,21 @@
-port module Main exposing (main)
+module Main exposing (main)
 
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 
+import Counter
+import Instructions
+import View
+
 type alias Flags = {}
 
-type alias Model = Int
+type alias Model =
+  { counter : Int
+  , instructions : Instructions.Model
+  }
 
-type Msg = Increment | Decrement
-
-port soundEvent : String -> Cmd msg
+type alias Msg = Counter.Msg
 
 main : Program Flags Model Msg
 main =
@@ -18,23 +23,35 @@ main =
 
 init : flags -> ( Model, Cmd msg )
 init _ =
-  ( 0, Cmd.none )
+  ( { counter =
+        0
+    , instructions =
+        Instructions.init
+    }
+  , Cmd.none
+  )
 
+view : Model -> Html Msg
 view model =
-  div []
-    [ button [ onClick Decrement ] [ text "-" ]
-    , div [] [ text (String.fromInt model) ]
-    , button [ onClick Increment ] [ text "+" ]
-    ]
+  View.view
+    { counter =
+        Counter.view model.counter
+    , instructions =
+        Instructions.view model.instructions
+    }
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-  case msg of
-    Increment ->
-      ( model + 1, soundEvent "PlayFixedShapeSoundEffect" )
-
-    Decrement ->
-      ( model - 1, Cmd.none )
+  let
+      (counter, cmd) = Counter.update msg model.counter
+  in
+  ( { counter =
+        counter
+    , instructions =
+        model.instructions
+    }
+  , cmd
+  )
 
 subscriptions : Model -> Sub msg
 subscriptions _ =
