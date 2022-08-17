@@ -71,7 +71,7 @@ view model =
         }
 
       everything : List (Html msg)
-      everything = [model.counter, viewPositionedImage examplePositionedImage]
+      everything = [viewPositionedImage examplePositionedImage]
       --everything = List.map viewPositionedImage model.elements
 
       background : Html msg
@@ -89,5 +89,6 @@ view model =
     , Html.div [class "container"]
         (background :: everything)
     , Html.div [class "instructions"] [model.instructions]
+    , model.counter
     --, Html.div [instructions_style] [Html.text model.debug]
     ]
