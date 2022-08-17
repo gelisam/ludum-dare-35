@@ -30,7 +30,7 @@ height = Array.length
 
 get : Coord -> Grid a -> Maybe a
 get coord grid =
-  Array.get coord.y grid `Maybe.andThen` Array.get coord.x
+  Array.get coord.y grid |> Maybe.andThen (Array.get coord.x)
 
 map : (a -> b) -> Grid a -> Grid b
 map = Array.map << Array.map

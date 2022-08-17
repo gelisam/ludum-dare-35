@@ -41,7 +41,7 @@ init start_coord =
 
 hasPowerup : Powerup -> Model -> Bool
 hasPowerup powerup model = 
-  Powerup.id powerup `Set.member` model.powerupIds
+  Powerup.id powerup |> Set.member model.powerupIds
 
 
 -- UPDATE
@@ -92,7 +92,7 @@ keys_are_pressed keys model = case keys of
     if model.last_keys /= Keys.LeftKey || model.inactive_dt > normal_auto_repeat_delay
     then
       { model
-      | coord = model.coord `Vec.plus` { x = -1, y = 0 }
+      | coord = model.coord |> Vec.plus { x = -1, y = 0 }
       , last_keys = Keys.LeftKey
       , inactive_dt = 0
       }
@@ -102,7 +102,7 @@ keys_are_pressed keys model = case keys of
     if model.last_keys /= Keys.RightKey || model.inactive_dt > normal_auto_repeat_delay
     then
       { model
-      | coord = model.coord `Vec.plus` { x = 1, y = 0 }
+      | coord = model.coord |> Vec.plus { x = 1, y = 0 }
       , last_keys = Keys.RightKey
       , inactive_dt = 0
       }
@@ -114,7 +114,7 @@ keys_are_pressed keys model = case keys of
       (model.last_keys /= Keys.UpKey || model.inactive_dt > up_auto_repeat_delay)
     then
       { model
-      | coord = model.coord `Vec.plus` { x = 0, y = -1 }
+      | coord = model.coord |> Vec.plus { x = 0, y = -1 }
       , last_keys = Keys.UpKey
       , inactive_dt = 0
       , gracePeriod = 500 * Time.millisecond
@@ -125,7 +125,7 @@ keys_are_pressed keys model = case keys of
     if model.last_keys /= Keys.DownKey || model.inactive_dt > down_auto_repeat_delay
     then
       { model
-      | coord = model.coord `Vec.plus` { x = 0, y = 1 }
+      | coord = model.coord |> Vec.plus { x = 0, y = 1 }
       , last_keys = Keys.DownKey
       , inactive_dt = 0
       }
@@ -162,7 +162,7 @@ pickup powerup model = case powerup of
       model
     else
       { model
-      | coord = coord `Vec.minus` { x = 2, y = 1 }
+      | coord = coord |> Vec.minus { x = 2, y = 1 }
       , shape = shape
       , orientation = orientation
       }

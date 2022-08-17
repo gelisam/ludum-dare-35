@@ -34,7 +34,7 @@ type alias Model =
 
 goal_focus_point : FocusPoint
 goal_focus_point =
-  Level.goal_coord `Vec.minus` { x = 2, y = 6}
+  Level.goal_coord |> Vec.minus { x = 2, y = 6}
 
 init : Model
 init =

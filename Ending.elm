@@ -52,7 +52,7 @@ pickup level_coord player_grid model =
     pickup1 : Coord -> Bool
     pickup1 player_coord =
       let
-        coord = level_coord `Vec.plus` player_coord
+        coord = level_coord |> Vec.plus player_coord
       in
         coord == model.coord
   in
@@ -125,7 +125,7 @@ element_grid2 =
 view : Model -> PositionedElement
 view model =
   { coord =
-      model.coord  `Vec.minus` { x = Grid.width char_grid0 - 1
+      model.coord |> Vec.minus { x = Grid.width char_grid0 - 1
                                , y = Grid.height char_grid0 - 1
                                }
   , element =

@@ -45,4 +45,7 @@ shapeShiftSignal = Keyboard.isDown (Char.toCode 'X')
   |> Signal.map shapeShiftAction
 
 signal : Signal Action
-signal = arrowSignal `Signal.merge` rotationSignal `Signal.merge` shapeShiftSignal
+signal =
+  arrowSignal
+    |> Signal.merge rotationSignal
+    |> Signal.merge shapeShiftSignal

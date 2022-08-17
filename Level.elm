@@ -150,7 +150,7 @@ collides level_coord player_grid =
     collidesAt player_coord =
       let
         player_block = Maybe.withDefault Nothing (Grid.get player_coord player_grid)
-        level_block = Grid.get (player_coord `Vec.plus` level_coord) block_grid
+        level_block = Grid.get (player_coord |> Vec.plus level_coord) block_grid
       in
         collidesWith player_block level_block
 

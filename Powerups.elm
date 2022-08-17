@@ -58,11 +58,11 @@ pickup level_coord player_grid powerups =
     pickup1 : Coord -> (List Powerup, Powerups) -> (List Powerup, Powerups)
     pickup1 player_coord (picked, remaining) =
       let
-        coord = level_coord `Vec.plus` player_coord
+        coord = level_coord |> Vec.plus player_coord
       in
         case (Grid.get player_coord player_grid, get coord remaining) of
           (Just (Just _), Just (FixedShape shape orientation dp)) ->
-            (FixedShape shape orientation (coord `Vec.plus` dp) :: picked, remaining)
+            (FixedShape shape orientation (coord |> Vec.plus dp) :: picked, remaining)
           (Just (Just _), Just powerup) ->
             (powerup :: picked, remove coord remaining)
           _ ->
