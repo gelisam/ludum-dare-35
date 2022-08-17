@@ -2,18 +2,20 @@ module View exposing (..)
 
 import Html exposing (Html)
 import Html.Attributes exposing (class, src, style)
---import Graphics.Element exposing (..)
+import Collage exposing (Collage, image)
+import Collage.Layout exposing (at, spacer, bottomRight)
+import Collage.Render
 
 import Vec exposing (..)
 
 
---type alias PositionedElement =
---  { coord : Coord
---  , element : Element
---  , visible : Bool -- due to react-style rendering optimizations,
---                   -- it's faster to display invisible elements
---                   -- than to remove them from the display list
---  }
+type alias PositionedElement msg =
+  { coord : Coord
+  , element : Collage msg
+  , visible : Bool -- due to react-style rendering optimizations,
+                   -- it's faster to display invisible elements
+                   -- than to remove them from the display list
+  }
 
 type alias Model msg =
   { camera : Pixels
@@ -28,29 +30,39 @@ view model =
   let
       camera_pixels = model.camera
 
-  --  positionElement : PositionedElement -> Element
-  --  positionElement positionedElement =
-  --    let
-  --      relative_pixels = pixels positionedElement.coord `minus` camera_pixels
-  --      position = topLeftAt
-  --        (absolute relative_pixels.x)
-  --        (absolute relative_pixels.y)
-  --    in
-  --      container 640 480 position positionedElement.element
-  --
-  --  viewLayer : Bool -> Html -> Html
-  --  viewLayer visible html =
-  --    Html.div [if visible then visible_layer_style else invisible_layer_style] [html]
-  --
-  --  viewPositionedElement : PositionedElement -> Html
-  --  viewPositionedElement positionedElement =
-  --    positionedElement
-  --      |> positionElement
-  --      |> Html.fromElement
-  --      |> viewLayer positionedElement.visible
-  --
+      positionElement : PositionedElement msg -> Collage msg
+      positionElement positionedElement =
+        let
+            relative_pixels = pixels positionedElement.coord |> minus camera_pixels
+        in
+        spacer (toFloat relative_pixels.x) (toFloat relative_pixels.y)
+          |> at bottomRight positionedElement.element
+
+      viewLayer : Bool -> Html msg -> Html msg
+      viewLayer visible html =
+        Html.div [if visible then class "visible_layer" else class "invisible_layer"] [html]
+
+      viewPositionedElement : PositionedElement msg -> Html msg
+      viewPositionedElement positionedElement =
+        positionedElement
+          |> positionElement
+          |> Collage.Render.svg
+          |> viewLayer positionedElement.visible
+
+      examplePositionedElement : PositionedElement msg
+      examplePositionedElement =
+        { coord =
+            { x = 0
+            , y = 0
+            }
+        , element =
+            image (28, 28) "imgs/white.png"
+        , visible =
+            True
+        }
+
       everything : List (Html msg)
-      everything = [model.counter]
+      everything = [model.counter, viewPositionedElement examplePositionedElement]
       --everything = List.map viewPositionedElement model.elements
 
       background : Html msg

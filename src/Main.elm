@@ -35,7 +35,7 @@ view : Model -> Html Msg
 view model =
   View.view
     { camera =
-        { x = 10 * model.counter
+        { x = model.counter
         , y = 0
         }
     , counter =
