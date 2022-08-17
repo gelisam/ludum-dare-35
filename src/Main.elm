@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Html exposing (Html, button, div, text)
@@ -10,11 +10,13 @@ type alias Model = Int
 
 type Msg = Increment | Decrement
 
+port soundEvent : String -> Cmd msg
+
 main : Program Flags Model Msg
 main =
   Browser.element { init = init, view = view, update = update, subscriptions = subscriptions }
 
-init : flags -> ( Model, Cmd Msg )
+init : flags -> ( Model, Cmd msg )
 init _ =
   ( 0, Cmd.none )
 
@@ -29,11 +31,11 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     Increment ->
-      ( model + 1, Cmd.none )
+      ( model + 1, soundEvent "PlayFixedShapeSoundEffect" )
 
     Decrement ->
       ( model - 1, Cmd.none )
 
-subscriptions : Model -> Sub Msg
+subscriptions : Model -> Sub msg
 subscriptions _ =
   Sub.none
