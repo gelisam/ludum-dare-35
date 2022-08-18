@@ -4,7 +4,7 @@ import Array exposing (Array)
 import String
 
 import Block exposing (Block(..))
-import Vec exposing (Coord, Pixels)
+import Vec exposing (Coord, Pixels, plus)
 import View exposing (PositionedImage)
 
 
@@ -52,13 +52,13 @@ keys grid =
   List.concatMap row_keys ys
 
 
-view : Grid (Maybe String) -> List PositionedImage
-view grid =
+view : Coord -> Grid (Maybe String) -> List PositionedImage
+view pos grid =
   grid
     |> indexedMap (\coord ->
          Maybe.map (\string ->
            { coord =
-               coord
+               coord |> plus pos
            , src =
                string
            , visible =

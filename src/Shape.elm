@@ -1,10 +1,11 @@
-module Shape where
+module Shape exposing (Shape(..), Orientation(..), nextShape, nextOrientation, view)
 
-import Graphics.Element as Element exposing (Element)
 import Set exposing (Set)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
+import Vec exposing (Coord)
+import View exposing (PositionedImage)
 
 
 type Shape = O | L | J | Z | S | T | I
@@ -132,5 +133,8 @@ char_grid shape orientation = case (shape, orientation) of
 block_grid : Shape -> Orientation -> Grid (Maybe Block)
 block_grid shape orientation = Grid.map Block.parse <| char_grid shape orientation
 
-view : Shape -> Orientation -> Element
-view shape orientation = Grid.view <| Grid.map Block.viewTransparent <| block_grid shape orientation
+view : Coord -> Shape -> Orientation -> List PositionedImage
+view coord shape orientation =
+  block_grid shape orientation
+    |> Grid.map Block.viewTransparent
+    |> Grid.view coord

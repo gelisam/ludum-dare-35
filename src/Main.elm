@@ -9,6 +9,7 @@ import Block
 import Counter
 import Grid
 import Instructions
+import Shape
 import Vec
 import View
 
@@ -45,18 +46,7 @@ view model =
     , counter =
         Counter.view model.counter
     , images =
-        Array.fromList
-          [ Array.fromList
-              [ Just Block.Orange
-              , Just Block.Yellow
-              ]
-          , Array.fromList
-              [ Nothing
-              , Just Block.Yellow
-              ]
-          ]
-          |> Grid.map Block.viewTransparent
-          |> Grid.view
+        Shape.view {x = 10, y = 3} Shape.L Shape.R0
     , instructions =
         Instructions.view model.instructions
     }
