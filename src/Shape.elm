@@ -176,4 +176,4 @@ view : Coord -> Shape -> Orientation -> List PositionedImage
 view coord shape orientation =
   block_grid shape orientation
     |> Grid.map Block.viewTransparent
-    |> Grid.view coord
+    |> Grid.viewTransparent coord

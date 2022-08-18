@@ -9,6 +9,7 @@ import Block
 import Counter
 import Grid
 import Instructions
+import Level
 import Powerup
 import Powerups
 import Shape
@@ -48,7 +49,7 @@ view model =
     , counter =
         Counter.view model.counter
     , images =
-        ( Powerups.view (Powerups.fromList [({x = 2, y = 2}, Powerup.Jump), ({x = 2, y = 3}, Powerup.Rotate)])
+        ( Level.view
        ++ Shape.view {x = 10, y = 3} Shape.L Shape.R0
         )
     , instructions =

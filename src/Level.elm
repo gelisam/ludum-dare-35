@@ -1,4 +1,4 @@
-module Level where
+module Level exposing (view)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
@@ -83,7 +83,8 @@ powerups =
   , FixedShape L R0 { x = 0, y = 0 }
   ]
 
-player_start : Coord
+-- It's going to be a Just, but Elm won't let me assert that.
+player_start : Maybe Coord
 player_start =
   let
       is_start_coord : Coord -> Bool
@@ -93,11 +94,12 @@ player_start =
       start_coords = List.filter is_start_coord coords
   in
   case start_coords of
-    [coord] -> coord
-    [] -> Debug.crash "level has no start position"
-    _ -> Debug.crash "level has more than one start position"
+    [coord] -> Just coord
+    [] -> Nothing  -- level has no start position
+    _ -> Nothing  -- level has more than one start position
 
-goal_coord : Coord
+-- It's going to be a Just, but Elm won't let me assert that.
+goal_coord : Maybe Coord
 goal_coord =
   let
       is_goal_coord : Coord -> Bool
@@ -107,9 +109,9 @@ goal_coord =
       goal_coords = List.filter is_goal_coord coords
   in
   case goal_coords of
-    [coord] -> coord
-    [] -> Debug.crash "level has no goal position"
-    _ -> Debug.crash "level has more than one goal position"
+    [coord] -> Just coord
+    [] -> Nothing -- level has no goal position
+    _ -> Nothing -- level has more than one goal position
 
 powerups_start : Powerups
 powerups_start =
@@ -120,7 +122,7 @@ powerups_start =
       coords = Grid.keys char_grid
       powerup_coords = List.filter is_powerup_coord coords
   in
-  Powerups.fromList <| List.map2 (,) powerup_coords powerups
+  Powerups.fromList <| List.map2 Tuple.pair powerup_coords powerups
 
 block_grid : Grid Block
 block_grid =
@@ -160,17 +162,10 @@ collides level_coord player_grid =
 
 -- VIEW
 
-element_grid : Grid Element
-element_grid =
+gridImages : Grid String
+gridImages =
     Grid.map Block.viewOpaque block_grid
 
-element : Element
-element =
-  Grid.view element_grid
-
-view : PositionedImage
+view : List PositionedImage
 view =
-  { coord = Vec.init
-  , element = element
-  , visible = True
-  }
+  Grid.viewOpaque Vec.init gridImages

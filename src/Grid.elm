@@ -52,8 +52,22 @@ keys grid =
   List.concatMap row_keys ys
 
 
-view : Coord -> Grid (Maybe String) -> List PositionedImage
-view pos grid =
+viewOpaque : Coord -> Grid String -> List PositionedImage
+viewOpaque pos grid =
+  grid
+    |> indexedMap (\coord string ->
+         { coord =
+             coord |> plus pos
+         , src =
+             string
+         , visible =
+             True
+         })
+    |> Array.toList
+    |> List.concatMap Array.toList
+
+viewTransparent : Coord -> Grid (Maybe String) -> List PositionedImage
+viewTransparent pos grid =
   grid
     |> indexedMap (\coord ->
          Maybe.map (\string ->
