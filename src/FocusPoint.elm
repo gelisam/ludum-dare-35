@@ -1,4 +1,4 @@
-module FocusPoint where
+module FocusPoint exposing (..)
 
 import Vec exposing (..)
 

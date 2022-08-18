@@ -6,9 +6,9 @@ import Dict
 import Either exposing (Either(..))
 import Html exposing (Html)
 
---import Camera
+import Camera
 --import Ending
---import FocusPoint exposing (FocusPoint)
+import FocusPoint exposing (FocusPoint)
 import Instructions
 import Keys
 import Level
@@ -24,9 +24,9 @@ type alias Flags = {}
 -- MODEL
 
 type alias Model =
-  --{ camera : Camera.Model
+  { camera : Camera.Model
   --, sound : Sound.Model
-  { player : Player.Model
+  , player : Player.Model
   , blinking_duration : Milliseconds
   , blinking_player : Maybe Player.Model
   , powerups : Powerups
@@ -35,16 +35,17 @@ type alias Model =
   }
 
 
---goal_focus_point : FocusPoint
---goal_focus_point =
---  Level.goal_coord |> Vec.minus { x = 2, y = 6}
+-- It's going to be a Right, but Elm won't let me assert that.
+goal_focus_point : Either String FocusPoint
+goal_focus_point =
+  Either.map (Vec.minus { x = 2, y = 6}) Level.goal_coord
 
 failedInit : String -> ( Model, Cmd msg )
 failedInit errorMessage =
   ( -- every value except debug is irrelevant
-    --{ camera = Camera.init
+    { camera = Camera.init Vec.init
     --, sound = Sound.init
-    { player = Player.init Vec.init
+    , player = Player.init Vec.init
     , blinking_duration = 0
     , blinking_player = Nothing
     , powerups = Dict.empty
@@ -65,9 +66,10 @@ initWithEither either f =
 init : flags -> ( Model, Cmd msg )
 init _ =
   initWithEither Level.player_start <| \player_start ->
-  --{ camera = Camera.init goal_focus_point
+  initWithEither goal_focus_point <| \camera_start ->
+  ( { camera = Camera.init camera_start
   --, sound = Sound.init
-  ( { player = Player.init player_start
+    , player = Player.init player_start
     , blinking_duration = 0
     , blinking_player = Nothing
     , powerups = Level.powerups_start
@@ -87,7 +89,7 @@ update msg model =
   ( model
       --|> prepare_sound
       |> game_update msg
-      --|> camera_update msg
+      |> camera_update msg
       --|> music_update
   , Cmd.none
   )
@@ -207,25 +209,29 @@ pickup_powerup powerup model =
 --  else
 --    model
 
---camera_update : Player.Msg -> Model -> Model
---camera_update msg model =
---  let
---      powerups =
---        Powerups.coords model.powerups
---      is_important_powerup coord = case Powerups.get coord model.powerups of
---        Nothing -> False
---        Just (FixedShape _ _ _) -> False
---        Just _ -> True
---      --camera_msg =
---      --  { coord = model.player.coord
---      --  , dt = msg.dt
---      --  , focus_points = List.concat
---      --      [ [goal_focus_point]
---      --      , List.filter is_important_powerup powerups
---      --      ]
---      --  }
---  in
---  { model | camera = Camera.update camera_msg model.camera }
+camera_update : Player.Msg -> Model -> Model
+camera_update msg model =
+  case msg of
+    TimePasses dt ->
+      let
+          powerups =
+            Powerups.coords model.powerups
+          is_important_powerup coord = case Powerups.get coord model.powerups of
+            Nothing -> False
+            Just (FixedShape _ _ _) -> False
+            Just _ -> True
+          camera_msg =
+            { coord = model.player.coord
+            , dt = dt
+            , focus_points = List.concat
+                [ Either.toList goal_focus_point
+                , List.filter is_important_powerup powerups
+                ]
+            }
+      in
+      { model | camera = Camera.update camera_msg model.camera }
+    _ ->
+      model
 
 --music_update : Model -> Model
 --music_update model =
@@ -245,8 +251,7 @@ view : Model -> Html msg
 view model =
   View.view
     { camera =
-        --Camera.view model.camera
-        { x = 1000, y = 0 }
+        Camera.view model.camera
     , images = List.concat
         [ Level.view
         , Powerups.view model.powerups

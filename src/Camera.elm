@@ -1,8 +1,7 @@
-module Camera where
-
-import Time exposing (Time)
+module Camera exposing (Model, init, Msg, update, view)
 
 import FocusPoint exposing (FocusPoint)
+import Player exposing (Milliseconds)
 import Vec exposing (..)
 
 
@@ -29,7 +28,7 @@ init coord =
 
 type alias Msg =
   { coord : Coord
-  , dt : Time
+  , dt : Milliseconds
   , focus_points : List FocusPoint
   }
 
@@ -59,7 +58,7 @@ update_velocity msg model =
 update_position : Msg -> Model -> Model
 update_position msg model =
   { model
-  | position = model.position |> plus scale msg.dt model.velocity
+  | position = model.position |> plus (scale msg.dt model.velocity)
   }
 
 
