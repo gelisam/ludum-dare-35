@@ -51,39 +51,39 @@ init =
 
 -- UPDATE
 
-update : Player.Action -> Model -> Model
-update action =
+update : Player.Msg -> Model -> Model
+update msg =
   prepare_sound >>
-  game_update action >>
-  camera_update action >>
+  game_update msg >>
+  camera_update msg >>
   music_update
 
 prepare_sound : Model -> Model
 prepare_sound model =
   { model | sound = Sound.update model.sound }
 
-game_update : Player.Action -> Model -> Model
-game_update action model = case model.blinking_player of
+game_update : Player.Msg -> Model -> Model
+game_update msg model = case model.blinking_player of
   Just _ ->
     if model.blinking_duration > 100 * Time.millisecond
     then
       { model | blinking_player = Nothing }
     else
-      { model | blinking_duration = model.blinking_duration + action.dt }
+      { model | blinking_duration = model.blinking_duration + msg.dt }
   Nothing ->
     if model.ending.has_ended
     then
       { model
-      | ending = Ending.update (action.dt, Ending.NoOp) model.ending
+      | ending = Ending.update (msg.dt, Ending.NoOp) model.ending
       }
     else
       let
-          player' = Player.update action model.player
+          player' = Player.update msg model.player
           collision = Level.collides player'.coord (Player.block_grid player')
       in
       if collision
       then
-        if action.keys == Keys.RotationKey || action.keys == Keys.ShapeShiftKey
+        if msg.keys == Keys.RotationKey || msg.keys == Keys.ShapeShiftKey
         then
           { model
           | blinking_duration = 0
@@ -100,12 +100,12 @@ game_update action model = case model.blinking_player of
           }
       else
         { model | player = player' }
-          |> check_instructions action
+          |> check_instructions msg
           |> check_powerups
           |> check_ending
 
-check_instructions : Player.Action -> Model -> Model
-check_instructions action model = case (action.keys, model.instructions) of
+check_instructions : Player.Msg -> Model -> Model
+check_instructions msg model = case (msg.keys, model.instructions) of
   (Keys.UpKey, Instructions.Intro) ->
     { model
     | instructions = Instructions.CannotRotate
@@ -158,8 +158,8 @@ check_ending model =
   else
     model
 
-camera_update : Player.Action -> Model -> Model
-camera_update action model =
+camera_update : Player.Msg -> Model -> Model
+camera_update msg model =
   let
       powerups =
         Powerups.coords model.powerups
@@ -167,16 +167,16 @@ camera_update action model =
         Nothing -> False
         Just (FixedShape _ _ _) -> False
         Just _ -> True
-      camera_action =
+      camera_msg =
         { coord = model.player.coord
-        , dt = action.dt
+        , dt = msg.dt
         , focus_points = List.concat
             [ [goal_focus_point]
             , List.filter is_important_powerup powerups
             ]
         }
   in
-  { model | camera = Camera.update camera_action model.camera }
+  { model | camera = Camera.update camera_msg model.camera }
 
 music_update : Model -> Model
 music_update model =
@@ -225,7 +225,7 @@ main =
   Signal.map view state
 
 
-input : Signal Player.Action
+input : Signal Player.Msg
 input =
   let
       delta = AnimationFrame.frame

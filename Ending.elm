@@ -26,11 +26,11 @@ init goal_coord =
 
 -- UPDATE
 
-type Action
+type Msg
   = NoOp
   | TheEnd
 
-update : (Time, Action) -> Model -> Model
+update : (Time, Msg) -> Model -> Model
 update (dt, action) model = case (action, model.has_ended) of
   (TheEnd, False) ->
     { model

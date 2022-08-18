@@ -24,7 +24,7 @@ type alias Model =
   , debug : String
   }
 
-type alias Msg = Keys.Action
+type alias Msg = Keys.Msg
 
 main : Program Flags Model Msg
 main =

@@ -20,9 +20,9 @@ init = Intro
 
 -- UPDATE
 
-type alias Action = Model
+type alias Msg = Model
 
-update : Action -> Model -> Model
+update : Msg -> Model -> Model
 update action _ = action
 
 

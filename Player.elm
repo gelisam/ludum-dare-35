@@ -15,7 +15,7 @@ import View exposing (PositionedImage)
 -- MODEL
 
 type alias Model =
-  { last_keys : Keys.Action
+  { last_keys : Keys.Msg
   , inactive_dt : Time
   , down_delay : Int
   , coord : Coord
@@ -46,15 +46,15 @@ hasPowerup powerup model =
 
 -- UPDATE
 
-type alias Action =
+type alias Msg =
   { dt : Time
-  , keys : Keys.Action
+  , keys : Keys.Msg
   }
 
-update : Action -> Model -> Model
-update action =
-  time_passes action.dt >>
-  keys_are_pressed action.keys
+update : Msg -> Model -> Model
+update msg =
+  time_passes msg.dt >>
+  keys_are_pressed msg.keys
 
 time_passes : Time -> Model -> Model
 time_passes dt model =
@@ -72,7 +72,7 @@ up_auto_repeat_delay = 120 * Time.millisecond
 down_auto_repeat_delay : Time
 down_auto_repeat_delay = 50 * Time.millisecond
 
-keys_are_pressed : Keys.Action -> Model -> Model
+keys_are_pressed : Keys.Msg -> Model -> Model
 keys_are_pressed keys model = case keys of
   Keys.NoOp ->
     if model.inactive_dt > toFloat model.down_delay * Time.millisecond

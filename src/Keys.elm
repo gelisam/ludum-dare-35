@@ -1,4 +1,4 @@
-module Keys exposing (Action(..), sub)
+module Keys exposing (Msg(..), sub)
 
 import Browser.Events
 import Char
@@ -8,7 +8,7 @@ import Platform.Sub
 import Vec exposing (Vec)
 
 
-type Action
+type Msg
   = NoOp
   | LeftKey
   | RightKey
@@ -22,8 +22,8 @@ keyDecoder : Decoder String
 keyDecoder =
   Json.Decode.field "key" Json.Decode.string
 
-keyAction : String -> Action
-keyAction key =
+keyMsg : String -> Msg
+keyMsg key =
   case key of
     "ArrowLeft" ->
       LeftKey
@@ -40,7 +40,7 @@ keyAction key =
     _ ->
       NoOp
 
-sub : Sub Action
+sub : Sub Msg
 sub =
   Browser.Events.onKeyDown keyDecoder
-    |> Sub.map keyAction
+    |> Sub.map keyMsg
