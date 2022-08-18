@@ -1,4 +1,4 @@
-module Powerups exposing (Powerups, fromList, view)
+module Powerups exposing (Powerups, fromList, get, pickup, coords, view)
 
 import Dict exposing (Dict)
 

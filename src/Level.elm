@@ -1,4 +1,4 @@
-module Level exposing (player_start, view)
+module Level exposing (player_start, powerups_start, collides, view)
 
 import Block exposing (Block(..))
 import Either exposing (Either(..))

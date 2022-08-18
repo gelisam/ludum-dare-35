@@ -1,4 +1,4 @@
-module Player exposing (Model, Msg(..), init, update, view, sub)
+module Player exposing (Milliseconds, Model, Msg(..), init, update, pickup, block_grid, view, sub)
 
 import Browser.Events
 import Set exposing (Set)
