@@ -6,9 +6,11 @@ import Html.Attributes exposing (class, src, style)
 import Vec exposing (..)
 
 
+type alias ImagePath = String
+
 type alias PositionedImage =
   { coord : Coord
-  , src : String
+  , src : ImagePath
   , visible : Bool -- due to react-style rendering optimizations,
                    -- it's faster to display invisible images
                    -- than to remove them from the display list

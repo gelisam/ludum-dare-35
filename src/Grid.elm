@@ -5,7 +5,7 @@ import String
 
 import Block exposing (Block(..))
 import Vec exposing (Coord, Pixels, plus)
-import View exposing (PositionedImage)
+import View exposing (ImagePath, PositionedImage)
 
 
 type alias Grid a = Array (Array a)
@@ -52,29 +52,29 @@ keys grid =
   List.concatMap row_keys ys
 
 
-viewOpaque : Coord -> Grid String -> List PositionedImage
+viewOpaque : Coord -> Grid ImagePath -> List PositionedImage
 viewOpaque pos grid =
   grid
-    |> indexedMap (\coord string ->
+    |> indexedMap (\coord imagePath ->
          { coord =
              coord |> plus pos
          , src =
-             string
+             imagePath
          , visible =
              True
          })
     |> Array.toList
     |> List.concatMap Array.toList
 
-viewTransparent : Coord -> Grid (Maybe String) -> List PositionedImage
+viewTransparent : Coord -> Grid (Maybe ImagePath) -> List PositionedImage
 viewTransparent pos grid =
   grid
     |> indexedMap (\coord ->
-         Maybe.map (\string ->
+         Maybe.map (\imagePath ->
            { coord =
                coord |> plus pos
            , src =
-               string
+               imagePath
            , visible =
                True
            }))
