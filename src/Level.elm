@@ -1,6 +1,7 @@
-module Level exposing (view)
+module Level exposing (player_start, view)
 
 import Block exposing (Block(..))
+import Either exposing (Either(..))
 import Grid exposing (Grid)
 import Powerup exposing (Powerup(..))
 import Powerups exposing (Powerups)
@@ -83,8 +84,8 @@ powerups =
   , FixedShape L R0 { x = 0, y = 0 }
   ]
 
--- It's going to be a Just, but Elm won't let me assert that.
-player_start : Maybe Coord
+-- It's going to be a Right, but Elm won't let me assert that.
+player_start : Either String Coord
 player_start =
   let
       is_start_coord : Coord -> Bool
@@ -94,12 +95,12 @@ player_start =
       start_coords = List.filter is_start_coord coords
   in
   case start_coords of
-    [coord] -> Just coord
-    [] -> Nothing  -- level has no start position
-    _ -> Nothing  -- level has more than one start position
+    [coord] -> Right coord
+    [] -> Left "level has no start position"
+    _ -> Left "level has more than one start position"
 
--- It's going to be a Just, but Elm won't let me assert that.
-goal_coord : Maybe Coord
+-- It's going to be a Right, but Elm won't let me assert that.
+goal_coord : Either String Coord
 goal_coord =
   let
       is_goal_coord : Coord -> Bool
@@ -109,9 +110,9 @@ goal_coord =
       goal_coords = List.filter is_goal_coord coords
   in
   case goal_coords of
-    [coord] -> Just coord
-    [] -> Nothing -- level has no goal position
-    _ -> Nothing -- level has more than one goal position
+    [coord] -> Right coord
+    [] -> Left "level has no goal position"
+    _ -> Left "level has more than one goal position"
 
 powerups_start : Powerups
 powerups_start =

@@ -1,7 +1,7 @@
-module Player where
+module Player exposing (Model, Msg(..), init, update, view, sub)
 
+import Browser.Events
 import Set exposing (Set)
-import Time exposing (Time)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
@@ -14,15 +14,17 @@ import View exposing (PositionedImage)
 
 -- MODEL
 
+type alias Milliseconds = Float
+
 type alias Model =
   { last_keys : Keys.Msg
-  , inactive_dt : Time
+  , inactive_dt : Milliseconds
   , down_delay : Int
   , coord : Coord
   , shape : Shape
   , orientation : Orientation
   , powerupIds : Set PowerupId
-  , gracePeriod : Time
+  , gracePeriod : Milliseconds
   }
 
 
@@ -41,48 +43,50 @@ init start_coord =
 
 hasPowerup : Powerup -> Model -> Bool
 hasPowerup powerup model =
-  Powerup.id powerup |> Set.member model.powerupIds
+  Set.member (Powerup.id powerup) model.powerupIds
 
 
 -- UPDATE
 
-type alias Msg =
-  { dt : Time
-  , keys : Keys.Msg
-  }
+type Msg
+  = TimePasses Milliseconds
+  | KeyPressed Keys.Msg
 
 update : Msg -> Model -> Model
 update msg =
-  time_passes msg.dt >>
-  keys_are_pressed msg.keys
+  case msg of
+    TimePasses dt ->
+      time_passes dt
+    KeyPressed key ->
+      keys_are_pressed key
 
-time_passes : Time -> Model -> Model
+time_passes : Milliseconds -> Model -> Model
 time_passes dt model =
   { model
   | inactive_dt = model.inactive_dt + dt
   , gracePeriod = model.gracePeriod - dt
   }
 
-normal_auto_repeat_delay : Time
-normal_auto_repeat_delay = 80 * Time.millisecond
+normal_auto_repeat_delay : Milliseconds
+normal_auto_repeat_delay = 80
 
-up_auto_repeat_delay : Time
-up_auto_repeat_delay = 120 * Time.millisecond
+up_auto_repeat_delay : Milliseconds
+up_auto_repeat_delay = 120
 
-down_auto_repeat_delay : Time
-down_auto_repeat_delay = 50 * Time.millisecond
+down_auto_repeat_delay : Milliseconds
+down_auto_repeat_delay = 50
 
 keys_are_pressed : Keys.Msg -> Model -> Model
 keys_are_pressed keys model = case keys of
   Keys.NoOp ->
-    if model.inactive_dt > toFloat model.down_delay * Time.millisecond
+    if model.inactive_dt > toFloat model.down_delay
         && model.gracePeriod <= 0
     then
       let
-          model' = keys_are_pressed Keys.DownKey model
+          model_ = keys_are_pressed Keys.DownKey model
       in
-      { model'
-      | down_delay = max 200 (model'.down_delay - 10)
+      { model_
+      | down_delay = max 200 (model_.down_delay - 10)
       }
     else
       { model
@@ -117,7 +121,7 @@ keys_are_pressed keys model = case keys of
       | coord = model.coord |> Vec.plus { x = 0, y = -1 }
       , last_keys = Keys.UpKey
       , inactive_dt = 0
-      , gracePeriod = 500 * Time.millisecond
+      , gracePeriod = 500
       }
     else
       model
@@ -177,9 +181,8 @@ pickup powerup model = case powerup of
 block_grid : Model -> Grid (Maybe Block)
 block_grid model = Shape.block_grid model.shape model.orientation
 
-view : Model -> PositionedImage
-view model =
-  { coord = model.coord
-  , element = Shape.view model.shape model.orientation
-  , visible = True
-  }
+view : Model -> List PositionedImage
+view model = Shape.view model.coord model.shape model.orientation
+
+sub : Sub Milliseconds
+sub = Browser.Events.onAnimationFrameDelta identity

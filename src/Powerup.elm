@@ -1,4 +1,4 @@
-module Powerup exposing (Powerup(..), view)
+module Powerup exposing (Powerup(..), PowerupId, id, view)
 
 import Shape exposing (Shape(..), Orientation(..), shapeString, orientationString)
 import Vec exposing (Coord, Vec)

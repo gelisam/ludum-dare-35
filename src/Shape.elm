@@ -5,6 +5,7 @@ module Shape exposing
   , nextOrientation
   , shapeString
   , orientationString
+  , block_grid
   , view
   )
 
