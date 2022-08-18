@@ -10,6 +10,7 @@ import Counter
 import Grid
 import Instructions
 import Powerup
+import Powerups
 import Shape
 import Vec
 import View
@@ -47,8 +48,8 @@ view model =
     , counter =
         Counter.view model.counter
     , images =
-        ( Powerup.view {x = 2, y = 2} Powerup.Jump True
-       :: Shape.view {x = 10, y = 3} Shape.L Shape.R0
+        ( Powerups.view (Powerups.fromList [({x = 2, y = 2}, Powerup.Jump), ({x = 2, y = 3}, Powerup.Rotate)])
+       ++ Shape.view {x = 10, y = 3} Shape.L Shape.R0
         )
     , instructions =
         Instructions.view model.instructions

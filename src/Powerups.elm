@@ -1,4 +1,4 @@
-module Powerups where
+module Powerups exposing (Powerups, fromList, view)
 
 import Dict exposing (Dict)
 
