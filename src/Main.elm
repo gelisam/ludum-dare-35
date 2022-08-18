@@ -7,7 +7,7 @@ import Either exposing (Either(..))
 import Html exposing (Html)
 
 import Camera
---import Ending
+import Ending
 import FocusPoint exposing (FocusPoint)
 import Instructions
 import Keys
@@ -31,14 +31,14 @@ type alias Model =
   , blinking_player : Maybe Player.Model
   , powerups : Powerups
   , instructions : Instructions.Model
-  --, ending : Ending.Model
+  , ending : Ending.Model
   }
 
 
 -- It's going to be a Right, but Elm won't let me assert that.
 goal_focus_point : Either String FocusPoint
 goal_focus_point =
-  Either.map (Vec.minus { x = 2, y = 6}) Level.goal_coord
+  Either.map (Vec.minus { x = 2, y = 6 }) Level.goal_coord
 
 failedInit : String -> ( Model, Cmd msg )
 failedInit errorMessage =
@@ -50,7 +50,7 @@ failedInit errorMessage =
     , blinking_player = Nothing
     , powerups = Dict.empty
     , instructions = Instructions.init
-    --, ending = Ending.init
+    , ending = Ending.init Vec.init
     }
   , Cmd.none
   )
@@ -66,6 +66,7 @@ initWithEither either f =
 init : flags -> ( Model, Cmd msg )
 init _ =
   initWithEither Level.player_start <| \player_start ->
+  initWithEither Level.goal_coord <| \goal_coord ->
   initWithEither goal_focus_point <| \camera_start ->
   ( { camera = Camera.init camera_start
   --, sound = Sound.init
@@ -74,7 +75,7 @@ init _ =
     , blinking_player = Nothing
     , powerups = Level.powerups_start
     , instructions = Instructions.init
-    --, ending = Ending.init Level.goal_coord
+    , ending = Ending.init goal_coord
     }
   , Cmd.none
   )
@@ -111,13 +112,16 @@ game_update msg model = case model.blinking_player of
       _ ->
         model
   Nothing ->
-    --if model.ending.has_ended
-    --then
-    --  model
-    --  { model
-    --  | ending = Ending.update (msg.dt, Ending.NoOp) model.ending
-    --  }
-    --else
+    if model.ending.has_ended
+    then
+      case msg of
+        TimePasses dt ->
+          { model
+          | ending = Ending.update (dt, Ending.NoOp) model.ending
+          }
+        _ ->
+          model
+    else
       let
           player_ = Player.update msg model.player
           hasCollided = Level.collides player_.coord (Player.block_grid player_)
@@ -153,7 +157,7 @@ game_update msg model = case model.blinking_player of
           { model | player = player_ }
             |> check_instructions msg
             |> check_powerups
-            --|> check_ending
+            |> check_ending
 
 check_instructions : Player.Msg -> Model -> Model
 check_instructions msg model = case (msg, model.instructions) of
@@ -198,16 +202,16 @@ pickup_powerup powerup model =
   --, sound = Sound.pickup powerup model.sound
   }
 
---check_ending : Model -> Model
---check_ending model =
---  if Ending.pickup model.player.coord (Player.block_grid model.player) model.ending
---  then
---    { model
---    | ending = Ending.update (0, Ending.TheEnd) model.ending
---    , instructions = Instructions.YouWin
---    }
---  else
---    model
+check_ending : Model -> Model
+check_ending model =
+  if Ending.pickup model.player.coord (Player.block_grid model.player) model.ending
+  then
+    { model
+    | ending = Ending.update (0, Ending.TheEnd) model.ending
+    , instructions = Instructions.YouWin
+    }
+  else
+    model
 
 camera_update : Player.Msg -> Model -> Model
 camera_update msg model =
@@ -256,7 +260,7 @@ view model =
         [ Level.view
         , Powerups.view model.powerups
         , viewPlayer model
-        --, [Ending.view model.ending]
+        , Ending.view model.ending
         ]
     , instructions = Instructions.view model.instructions
     , debug = ""

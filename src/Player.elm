@@ -37,8 +37,8 @@ init start_coord =
   , shape = I
   , orientation = R0
   , powerupIds = Set.empty
+  --, powerupIds = Set.fromList <| List.map Powerup.id [Jump, Rotate, ShapeShift]
   , gracePeriod = 0
-  -- , powerupIds = Set.fromList <| List.map Powerup.id [Jump, Rotate, ShapeShift]
   }
 
 hasPowerup : Powerup -> Model -> Bool

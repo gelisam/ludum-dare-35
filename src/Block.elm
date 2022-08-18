@@ -1,6 +1,6 @@
 module Block exposing (..)
 
-import String
+import View exposing (ImagePath)
 
 
 type Block
@@ -28,7 +28,7 @@ parse char = case char of
   _   -> Nothing
 
 
-viewOpaque : Block -> String
+viewOpaque : Block -> ImagePath
 viewOpaque color =
   case color of
     White ->
@@ -50,6 +50,6 @@ viewOpaque color =
     Yellow ->
       "imgs/yellow.png"
 
-viewTransparent : Maybe Block -> Maybe String
+viewTransparent : Maybe Block -> Maybe ImagePath
 viewTransparent = 
   Maybe.map viewOpaque

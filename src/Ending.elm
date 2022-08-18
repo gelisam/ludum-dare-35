@@ -1,17 +1,16 @@
-module Ending where
-
-import Time exposing (Time)
+module Ending exposing (Model, init, Msg(..), update, pickup, view)
 
 import Block exposing (Block(..))
 import Grid exposing (Grid)
+import Player exposing (Milliseconds)
 import Vec exposing (Coord, Vec)
-import View exposing (PositionedImage)
+import View exposing (ImagePath, PositionedImage)
 
 
 -- MODEL
 
 type alias Model =
-  { elapsed : Time
+  { elapsed : Milliseconds
   , coord : Coord
   , has_ended : Bool
   }
@@ -30,7 +29,7 @@ type Msg
   = NoOp
   | TheEnd
 
-update : (Time, Msg) -> Model -> Model
+update : (Milliseconds, Msg) -> Model -> Model
 update (dt, action) model = case (action, model.has_ended) of
   (TheEnd, False) ->
     { model
@@ -108,34 +107,44 @@ block_grid2 : Grid Block
 block_grid2 =
   Grid.map (Maybe.withDefault White << Block.parse) char_grid2
 
-element_grid0 : Grid Element
+element_grid0 : Grid ImagePath
 element_grid0 =
     Grid.map Block.viewOpaque block_grid0
 
-element_grid1 : Grid Element
+element_grid1 : Grid ImagePath
 element_grid1 =
     Grid.map Block.viewOpaque block_grid1
 
-element_grid2 : Grid Element
+element_grid2 : Grid ImagePath
 element_grid2 =
     Grid.map Block.viewOpaque block_grid2
 
 
-view : Model -> PositionedImage
+setVisibility : Bool -> Grid ImagePath -> Grid (Maybe ImagePath)
+setVisibility visibility =
+  Grid.map <| \imagePath ->
+    case visibility of
+      True ->
+        Just imagePath
+      False ->
+        Nothing
+
+view : Model -> List PositionedImage
 view model =
-  { coord =
-      model.coord |> Vec.minus { x = Grid.width char_grid0 - 1
-                               , y = Grid.height char_grid0 - 1
-                               }
-  , element =
-      if model.elapsed < 1800 * Time.millisecond
-      then
-        if round (model.elapsed / 100 * Time.millisecond) % 2 == 0
+  let
+      coord =
+        model.coord |> Vec.minus { x = Grid.width char_grid0 - 1
+                                 , y = Grid.height char_grid0 - 1
+                                 }
+      images =
+        if model.elapsed < 1800
         then
-          Grid.view element_grid1
+          if (round (model.elapsed / 100) |> modBy 2) == 0
+          then
+            element_grid1
+          else
+            element_grid0
         else
-          Grid.view element_grid0
-      else
-        Grid.view element_grid2
-  , visible = model.has_ended
-  }
+          element_grid2
+  in
+  Grid.viewTransparent coord (setVisibility model.has_ended images)
