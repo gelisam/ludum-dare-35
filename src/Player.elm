@@ -56,7 +56,7 @@ update : Msg -> Model -> Model
 update msg =
   case msg of
     TimePasses dt ->
-      time_passes dt
+      time_passes dt >> apply_gravity
     KeyPressed key ->
       keys_are_pressed key
 
@@ -66,6 +66,20 @@ time_passes dt model =
   | inactive_dt = model.inactive_dt + dt
   , gracePeriod = model.gracePeriod - dt
   }
+
+apply_gravity : Model -> Model
+apply_gravity model =
+  if model.inactive_dt > toFloat model.down_delay
+      && model.gracePeriod <= 0
+  then
+    let
+        model_ = keys_are_pressed Keys.DownKey model
+    in
+    { model_
+    | down_delay = max 200 (model_.down_delay - 10)
+    }
+  else
+    model
 
 normal_auto_repeat_delay : Milliseconds
 normal_auto_repeat_delay = 80
@@ -79,16 +93,6 @@ down_auto_repeat_delay = 50
 keys_are_pressed : Keys.Msg -> Model -> Model
 keys_are_pressed keys model = case keys of
   Keys.NoOp ->
-    if model.inactive_dt > toFloat model.down_delay
-        && model.gracePeriod <= 0
-    then
-      let
-          model_ = keys_are_pressed Keys.DownKey model
-      in
-      { model_
-      | down_delay = max 200 (model_.down_delay - 10)
-      }
-    else
       { model
       | last_keys = Keys.NoOp
       }
