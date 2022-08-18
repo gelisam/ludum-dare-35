@@ -1,4 +1,12 @@
-module Shape exposing (Shape(..), Orientation(..), nextShape, nextOrientation, view)
+module Shape exposing
+  ( Shape(..)
+  , Orientation(..)
+  , nextShape
+  , nextOrientation
+  , shapeString
+  , orientationString
+  , view
+  )
 
 import Set exposing (Set)
 
@@ -28,6 +36,37 @@ nextOrientation orientation = case orientation of
   R1 -> R2
   R2 -> R3
   R3 -> R0
+
+
+shapeString : Shape -> String
+shapeString shape =
+  case shape of
+    O ->
+      "O"
+    L ->
+      "L"
+    J ->
+      "J"
+    Z ->
+      "Z"
+    S ->
+      "S"
+    T ->
+      "T"
+    I ->
+      "I"
+
+orientationString : Orientation -> String
+orientationString orientation =
+  case orientation of
+    R0 ->
+      "R0"
+    R1 ->
+      "R1"
+    R2 ->
+      "R2"
+    R3 ->
+      "R3"
 
 
 char_grid : Shape -> Orientation -> Grid Char

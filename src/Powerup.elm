@@ -1,6 +1,6 @@
-module Powerup where
+module Powerup exposing (Powerup(..), view)
 
-import Shape exposing (Shape(..), Orientation(..))
+import Shape exposing (Shape(..), Orientation(..), shapeString, orientationString)
 import Vec exposing (Coord, Vec)
 import View exposing (PositionedImage)
 
@@ -21,13 +21,12 @@ id powerup = case powerup of
   Rotate -> 2
   ShapeShift -> 3
 
-
 view : Coord -> Powerup -> Bool -> PositionedImage
 view coord powerup visible =
   { coord = coord
   , src = case powerup of
       FixedShape shape orientation _ ->
-        "imgs/" ++ toString shape ++ "_" ++ toString orientation ++ ".png"
+        "imgs/" ++ shapeString shape ++ "_" ++ orientationString orientation ++ ".png"
       Jump ->
         "imgs/jump.png"
       Rotate ->
