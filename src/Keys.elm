@@ -40,7 +40,13 @@ keyMsg key =
     _ ->
       NoOp
 
-sub : Sub Msg
-sub =
-  Browser.Events.onKeyDown keyDecoder
-    |> Sub.map keyMsg
+sub : (Msg -> msg) -> (Msg -> msg) -> Sub msg
+sub pressed released =
+  Sub.batch
+    [ Browser.Events.onKeyDown keyDecoder
+        |> Sub.map keyMsg
+        |> Sub.map pressed
+    , Browser.Events.onKeyUp keyDecoder
+        |> Sub.map keyMsg
+        |> Sub.map released
+    ]

@@ -36,8 +36,8 @@ init start_coord =
   , coord = start_coord
   , shape = I
   , orientation = R0
-  , powerupIds = Set.empty
-  --, powerupIds = Set.fromList <| List.map Powerup.id [Jump, Rotate, ShapeShift]
+  --, powerupIds = Set.empty
+  , powerupIds = Set.fromList <| List.map Powerup.id [Jump, Rotate, ShapeShift]
   , gracePeriod = 0
   }
 
@@ -51,6 +51,7 @@ hasPowerup powerup model =
 type Msg
   = TimePasses Milliseconds
   | KeyPressed Keys.Msg
+  | KeyReleased Keys.Msg
 
 update : Msg -> Model -> Model
 update msg =
@@ -59,6 +60,8 @@ update msg =
       time_passes dt >> apply_gravity
     KeyPressed key ->
       keys_are_pressed key
+    KeyReleased key ->
+      keys_are_released key
 
 time_passes : Milliseconds -> Model -> Model
 time_passes dt model =
@@ -162,6 +165,12 @@ keys_are_pressed keys model = case keys of
     else
       model
 
+keys_are_released : Keys.Msg -> Model -> Model
+keys_are_released _ model =
+  { model
+  | last_keys = Keys.NoOp
+  }
+
 pickup : Powerup -> Model -> Model
 pickup powerup model = case powerup of
   FixedShape shape orientation coord ->
@@ -188,5 +197,5 @@ block_grid model = Shape.block_grid model.shape model.orientation
 view : Model -> List PositionedImage
 view model = Shape.view model.coord model.shape model.orientation
 
-sub : Sub Milliseconds
-sub = Browser.Events.onAnimationFrameDelta identity
+sub : (Milliseconds -> msg) -> Sub msg
+sub = Browser.Events.onAnimationFrameDelta

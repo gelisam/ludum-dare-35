@@ -278,8 +278,8 @@ viewPlayer model = case model.blinking_player of
 subscriptions : Model -> Sub Msg
 subscriptions _ =
   Sub.batch
-    [ Sub.map Player.KeyPressed Keys.sub
-    , Sub.map Player.TimePasses Player.sub
+    [ Keys.sub Player.KeyPressed Player.KeyReleased
+    , Player.sub Player.TimePasses
     ]
 
 main : Program Flags Model Msg
