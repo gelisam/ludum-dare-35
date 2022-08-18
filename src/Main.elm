@@ -6,9 +6,10 @@ import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 
 import Block
-import Counter
+import Debug
 import Grid
 import Instructions
+import Keys
 import Level
 import Powerup
 import Powerups
@@ -19,11 +20,11 @@ import View
 type alias Flags = {}
 
 type alias Model =
-  { counter : Int
-  , instructions : Instructions.Model
+  { instructions : Instructions.Model
+  , debug : String
   }
 
-type alias Msg = Counter.Msg
+type alias Msg = Keys.Action
 
 main : Program Flags Model Msg
 main =
@@ -31,10 +32,10 @@ main =
 
 init : flags -> ( Model, Cmd msg )
 init _ =
-  ( { counter =
-        0
-    , instructions =
+  ( { instructions =
         Instructions.init
+    , debug =
+        ""
     }
   , Cmd.none
   )
@@ -43,32 +44,29 @@ view : Model -> Html Msg
 view model =
   View.view
     { camera =
-        { x = model.counter
+        { x = 0
         , y = 0
         }
-    , counter =
-        Counter.view model.counter
     , images =
         ( Level.view
        ++ Shape.view {x = 10, y = 3} Shape.L Shape.R0
         )
     , instructions =
         Instructions.view model.instructions
+    , debug =
+        model.debug
     }
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-  let
-      (counter, cmd) = Counter.update msg model.counter
-  in
-  ( { counter =
-        counter
-    , instructions =
+  ( { instructions =
         model.instructions
+    , debug =
+        model.debug ++ Debug.toString msg
     }
-  , cmd
+  , Cmd.none
   )
 
-subscriptions : Model -> Sub msg
+subscriptions : Model -> Sub Msg
 subscriptions _ =
-  Sub.none
+  Keys.sub

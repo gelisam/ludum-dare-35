@@ -16,10 +16,9 @@ type alias PositionedImage =
 
 type alias Model msg =
   { camera : Pixels
-  , counter : Html msg
   , images : List PositionedImage
   , instructions : Html msg
-  --, debug : String
+  , debug : String
   }
 
 view : Model msg -> Html msg
@@ -76,6 +75,5 @@ view model =
     , Html.div [class "container"]
         (background :: everything)
     , Html.div [class "instructions"] [model.instructions]
-    , model.counter
-    --, Html.div [instructions_style] [Html.text model.debug]
+    , Html.div [class "instructions"] [Html.text model.debug]
     ]
