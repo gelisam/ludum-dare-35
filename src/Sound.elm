@@ -1,9 +1,11 @@
-module Sound where
+port module Sound exposing (..)
 
 import Powerup exposing (Powerup(..))
 
 
 -- MODEL
+
+type alias SoundCommand = String
 
 type Event
   = PlayMusic
@@ -49,5 +51,24 @@ pickup powerup model = case powerup of
 
 -- VIEW
 
-signal : Signal Model -> Signal (Maybe String)
-signal = Signal.map (Maybe.map toString << .event)
+port soundEvent : SoundCommand -> Cmd msg
+
+eventString : Event -> String
+eventString event =
+  case event of
+    PlayMusic ->
+      "PlayMusic"
+    StopMusic ->
+      "StopMusic"
+    PlayFixedShapeSoundEffect ->
+      "PlayFixedShapeSoundEffect"
+    PlayUpgradeSoundEffect ->
+      "PlayUpgradeSoundEffect"
+
+updateCmd : Model -> Cmd msg
+updateCmd model =
+  case model.event of
+    Just event ->
+      soundEvent (eventString event)
+    Nothing ->
+      Cmd.none

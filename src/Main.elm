@@ -15,7 +15,7 @@ import Level
 import Player exposing (Milliseconds, Msg(..))
 import Powerup exposing (Powerup(..))
 import Powerups exposing (Powerups)
---import Sound
+import Sound
 import Vec exposing (Coord, Vec)
 import View exposing (PositionedImage)
 
@@ -25,7 +25,7 @@ type alias Flags = {}
 
 type alias Model =
   { camera : Camera.Model
-  --, sound : Sound.Model
+  , sound : Sound.Model
   , player : Player.Model
   , blinking_duration : Milliseconds
   , blinking_player : Maybe Player.Model
@@ -40,22 +40,20 @@ goal_focus_point : Either String FocusPoint
 goal_focus_point =
   Either.map (Vec.minus { x = 2, y = 6 }) Level.goal_coord
 
-failedInit : String -> ( Model, Cmd msg )
+failedInit : String -> Model
 failedInit errorMessage =
-  ( -- every value except debug is irrelevant
-    { camera = Camera.init Vec.init
-    --, sound = Sound.init
-    , player = Player.init Vec.init
-    , blinking_duration = 0
-    , blinking_player = Nothing
-    , powerups = Dict.empty
-    , instructions = Instructions.init
-    , ending = Ending.init Vec.init
-    }
-  , Cmd.none
-  )
+  -- every value except debug is irrelevant
+  { camera = Camera.init Vec.init
+  , sound = Sound.init
+  , player = Player.init Vec.init
+  , blinking_duration = 0
+  , blinking_player = Nothing
+  , powerups = Dict.empty
+  , instructions = Instructions.init
+  , ending = Ending.init Vec.init
+  }
 
-initWithEither : Either String a -> (a -> ( Model, Cmd msg )) -> ( Model, Cmd msg )
+initWithEither : Either String a -> (a -> Model) -> Model
 initWithEither either f =
   case either of
     Left errorMessage ->
@@ -63,41 +61,56 @@ initWithEither either f =
     Right a ->
       f a
 
-init : flags -> ( Model, Cmd msg )
-init _ =
+init : Model
+init =
   initWithEither Level.player_start <| \player_start ->
   initWithEither Level.goal_coord <| \goal_coord ->
   initWithEither goal_focus_point <| \camera_start ->
-  ( { camera = Camera.init camera_start
-  --, sound = Sound.init
-    , player = Player.init player_start
-    , blinking_duration = 0
-    , blinking_player = Nothing
-    , powerups = Level.powerups_start
-    , instructions = Instructions.init
-    , ending = Ending.init goal_coord
-    }
-  , Cmd.none
-  )
+  { camera = Camera.init camera_start
+  , sound = Sound.init
+  , player = Player.init player_start
+  , blinking_duration = 0
+  , blinking_player = Nothing
+  , powerups = Level.powerups_start
+  , instructions = Instructions.init
+  , ending = Ending.init goal_coord
+  }
+
+initCmd : Cmd msg
+initCmd =
+  Cmd.none
+
+fancyInit : flags -> ( Model, Cmd msg )
+fancyInit _ =
+  (init, initCmd)
 
 
 -- UPDATE
 
 type alias Msg = Player.Msg
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> Model
 update msg model =
-  ( model
-      --|> prepare_sound
-      |> game_update msg
-      |> camera_update msg
-      --|> music_update
-  , Cmd.none
-  )
+  model
+    |> prepare_sound
+    |> game_update msg
+    |> camera_update msg
+    |> music_update
 
---prepare_sound : Model -> Model
---prepare_sound model =
---  { model | sound = Sound.update model.sound }
+updateCmd : Msg -> Model -> Cmd msg
+updateCmd msg model =
+  Sound.updateCmd model.sound
+
+fancyUpdate : Msg -> Model -> ( Model, Cmd msg )
+fancyUpdate msg model =
+  let
+      model_ = update msg model
+  in
+  (model_, updateCmd msg model_)
+
+prepare_sound : Model -> Model
+prepare_sound model =
+  { model | sound = Sound.update model.sound }
 
 game_update : Player.Msg -> Model -> Model
 game_update msg model = case model.blinking_player of
@@ -199,7 +212,7 @@ pickup_powerup powerup model =
   { model
   | player = Player.pickup powerup model.player
   , instructions = Instructions.HowToUsePowerup powerup
-  --, sound = Sound.pickup powerup model.sound
+  , sound = Sound.pickup powerup model.sound
   }
 
 check_ending : Model -> Model
@@ -237,16 +250,20 @@ camera_update msg model =
     _ ->
       model
 
---music_update : Model -> Model
---music_update model =
---  if FocusPoint.isClose model.player.coord goal_focus_point
---  then
---    model
---  else
---    -- the player ventures into the unknown, cue the music!
---    { model
---    | sound = Sound.playMusic model.sound
---    }
+music_update : Model -> Model
+music_update model =
+  case goal_focus_point of
+    Right start_coord ->
+      if FocusPoint.isClose model.player.coord start_coord
+      then
+        model
+      else
+        -- the player ventures into the unknown, cue the music!
+        { model
+        | sound = Sound.playMusic model.sound
+        }
+    Left _ ->
+      model
 
 
 -- VIEW
@@ -284,4 +301,9 @@ subscriptions _ =
 
 main : Program Flags Model Msg
 main =
-  Browser.element { init = init, view = view, update = update, subscriptions = subscriptions }
+  Browser.element
+    { init = fancyInit
+    , view = view
+    , update = fancyUpdate
+    , subscriptions = subscriptions
+    }

@@ -95,7 +95,7 @@
 
       try {
         var app = Elm.Main.init({ node: document.getElementById("elm") });
-        //app.ports.soundEvent.subscribe(onSoundEvent);
+        app.ports.soundEvent.subscribe(onSoundEvent);
       }
       catch (e)
       {
