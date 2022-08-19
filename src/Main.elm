@@ -24,7 +24,8 @@ type alias Flags = {}
 -- MODEL
 
 type alias Model =
-  { camera : Camera.Model
+  { started : Bool
+  , camera : Camera.Model
   , sound : Sound.Model
   , player : Player.Model
   , blinking_duration : Milliseconds
@@ -43,7 +44,8 @@ goal_focus_point =
 failedInit : String -> Model
 failedInit errorMessage =
   -- every value except debug is irrelevant
-  { camera = Camera.init Vec.init
+  { started = False
+  , camera = Camera.init Vec.init
   , sound = Sound.init
   , player = Player.init Vec.init
   , blinking_duration = 0
@@ -66,7 +68,8 @@ init =
   initWithEither Level.player_start <| \player_start ->
   initWithEither Level.goal_coord <| \goal_coord ->
   initWithEither goal_focus_point <| \camera_start ->
-  { camera = Camera.init camera_start
+  { started = False
+  , camera = Camera.init camera_start
   , sound = Sound.init
   , player = Player.init player_start
   , blinking_duration = 0
@@ -87,9 +90,11 @@ fancyInit _ =
 
 -- UPDATE
 
-type alias Msg = Player.Msg
+type Msg
+  = Start
+  | PlayerAction Player.Msg
 
-update : Msg -> Model -> Model
+update : Player.Msg -> Model -> Model
 update msg model =
   model
     |> prepare_sound
@@ -97,16 +102,26 @@ update msg model =
     |> camera_update msg
     |> music_update
 
-updateCmd : Msg -> Model -> Cmd msg
+updateCmd : Player.Msg -> Model -> Cmd msg
 updateCmd msg model =
   Sound.updateCmd model.sound
 
 fancyUpdate : Msg -> Model -> ( Model, Cmd msg )
 fancyUpdate msg model =
-  let
-      model_ = update msg model
-  in
-  (model_, updateCmd msg model_)
+  case (msg, model.started) of
+    (Start, _) ->
+      ( { model
+        | started = True
+        }
+      , Cmd.none
+      )
+    (_, False) ->
+      (model, Cmd.none)
+    (PlayerAction playerMsg, True) ->
+      let
+          model_ = update playerMsg model
+      in
+      (model_, updateCmd playerMsg model_)
 
 prepare_sound : Model -> Model
 prepare_sound model =
@@ -268,10 +283,12 @@ music_update model =
 
 -- VIEW
 
-view : Model -> Html msg
+view : Model -> Html Msg
 view model =
-  View.view
-    { camera =
+  View.view Start
+    { started =
+        model.started
+    , camera =
         Camera.view model.camera
     , images = List.concat
         [ Level.view
@@ -295,8 +312,11 @@ viewPlayer model = case model.blinking_player of
 subscriptions : Model -> Sub Msg
 subscriptions _ =
   Sub.batch
-    [ Keys.sub Player.KeyPressed Player.KeyReleased
-    , Player.sub Player.TimePasses
+    [ Keys.sub
+        (PlayerAction << Player.KeyPressed)
+        (PlayerAction << Player.KeyReleased)
+    , Player.sub
+        (PlayerAction << Player.TimePasses)
     ]
 
 main : Program Flags Model Msg

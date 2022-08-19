@@ -2,6 +2,7 @@ module View exposing (..)
 
 import Html exposing (Attribute, Html)
 import Html.Attributes exposing (class, src, style)
+import Html.Events exposing (onClick)
 
 import Vec exposing (..)
 
@@ -17,14 +18,15 @@ type alias PositionedImage =
   }
 
 type alias Model msg =
-  { camera : Pixels
+  { started : Bool
+  , camera : Pixels
   , images : List PositionedImage
   , instructions : Html msg
   , debug : String
   }
 
-view : Model msg -> Html msg
-view model =
+view : msg -> Model msg -> Html msg
+view start model =
   let
       camera_pixels = model.camera
 
@@ -71,11 +73,30 @@ view model =
               ]
               []
           ]
+
+      playButton : Html msg
+      playButton =
+        Html.img
+          [ src "imgs/play.png"
+          , style "position" "relative"
+          , style "width" "64px"
+          , style "height" "64px"
+          , style "left" (String.fromInt ((640 - 64) // 2) ++ "px")
+          , style "top" (String.fromInt ((480 - 64) // 2) ++ "px")
+          , onClick start
+          ]
+          []
   in
   Html.div [class "top"]
     [ Html.img [class "title", src "imgs/title.png"] []
     , Html.div [class "container"]
-        (background :: everything)
+        ( Html.div
+            (if model.started then [] else [class "disabled"])
+            ( [background]
+           ++ everything
+            )
+       :: if model.started then [] else [playButton]
+        )
     , Html.div [class "instructions"] [model.instructions]
     , Html.div [class "instructions"] [Html.text model.debug]
     ]
